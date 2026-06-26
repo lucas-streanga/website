@@ -61,36 +61,4 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         justify-content: center;
         margin-block-start: var(--space-8);
     }
-
-    /* Buttons — same treatment as the home page. */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        padding: var(--space-3) var(--space-6);
-        border-radius: var(--radius);
-        font-weight: 600;
-        font-size: var(--text-sm);
-        text-decoration: none;
-        border: 1px solid transparent;
-        transition:
-            background-color 0.15s ease,
-            border-color 0.15s ease,
-            color 0.15s ease;
-    }
-    .btn-primary {
-        background-color: var(--color-brand);
-        color: var(--color-brand-contrast);
-    }
-    .btn-primary:hover {
-        background-color: var(--color-brand-hover);
-        color: var(--color-brand-contrast);
-    }
-    .btn-ghost {
-        color: var(--color-text);
-        border-color: var(--color-border);
-    }
-    .btn-ghost:hover {
-        border-color: var(--color-brand);
-        background-color: var(--color-surface-sunken);
-    }
 </style>
