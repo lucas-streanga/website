@@ -1,6 +1,8 @@
 ---
 // Colors/spacing all come from the tokens in styles/global.css.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BlurImage from "../components/BlurImage.astro";
+import me from "../assets/me.png";
 ---
 
 <BaseLayout title="Lucas — Home" description="Personal site of Lucas.">
@@ -22,12 +24,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
                 </div>
 
                 <div class="hero-media">
-                    <img
-                        src="/me.png"
+                    <BlurImage
+                        src={me}
                         alt="Lucas"
+                        width={320}
+                        height={320}
+                        priority
                         class="photo"
-                        width="320"
-                        height="320"
                     />
                 </div>
             </div>
@@ -69,22 +72,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         margin-block-start: var(--space-8);
     }
 
-    /* Photo / placeholder — square with soft rounded corners. */
-    .photo {
+    .hero-media :global(.photo) {
         inline-size: 100%;
         max-inline-size: 320px;
         aspect-ratio: 1;
         border-radius: var(--radius-lg);
-        object-fit: cover;
         margin-inline: auto;
-    }
-    .photo-placeholder {
-        display: grid;
-        place-items: center;
-        background-color: var(--color-surface-sunken);
-        border: 1px dashed var(--color-border);
-        color: var(--color-text-muted);
-        font-size: var(--text-sm);
     }
 
     /* Stack on narrow screens; photo first so it doesn't get pushed off-screen. */
