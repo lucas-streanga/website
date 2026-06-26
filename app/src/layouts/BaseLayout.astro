@@ -2,6 +2,7 @@
 // BaseLayout.astro — the HTML shell every page wraps in.
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
     title?: string;
@@ -17,13 +18,14 @@ const {
 <!doctype html>
 <html lang="en">
     <head>
+        <ClientRouter />
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content={description} />
         <title>{title}</title>
 
         <script is:inline>
-            (function () {
+            function applyTheme() {
                 try {
                     var saved = localStorage.getItem("theme");
                     var prefersDark = window.matchMedia(
@@ -34,7 +36,9 @@ const {
                 } catch (_) {
                     document.documentElement.dataset.theme = "light";
                 }
-            })();
+            }
+            applyTheme(); // initial load / refresh
+            document.addEventListener("astro:after-swap", applyTheme); // re-apply after each navigation
         </script>
     </head>
 
