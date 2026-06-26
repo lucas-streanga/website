@@ -1,0 +1,92 @@
+---
+// BaseLayout.astro — the HTML shell every page wraps in.
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+    title?: string;
+    description?: string;
+    image?: string; // og:image — relative path or absolute URL; override per post
+    type?: "website" | "article"; // og:type — "article" for blog posts
+}
+
+const {
+    title = "streanga.com",
+    description = "Personal site of Lucas.",
+    image = "/og-default.png",
+    type = "website",
+} = Astro.props;
+
+// Absolute URLs for canonical + social tags. Requires `site` in astro.config.mjs.
+// new URL(relativeOrAbsolute, base): a relative path resolves against the site,
+// an already-absolute URL is returned unchanged — so per-post overrides can be either.
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(image, Astro.site);
+const SITE_NAME = "streanga.com";
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <noscript>
+            <style>
+                #theme-toggle {
+                    display: none;
+                }
+            </style>
+        </noscript>
+        <ClientRouter />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalURL} />
+
+        <!-- Favicons. The SVG covers modern browsers; add the PNG/ICO files to
+             /public if you want broader coverage (see notes). -->
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        <!-- Open Graph (Slack, Discord, iMessage, Facebook, LinkedIn, …) -->
+        <meta property="og:type" content={type} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:image" content={ogImageURL} />
+        <meta property="og:image:alt" content={title} />
+        <meta property="og:site_name" content={SITE_NAME} />
+        <meta property="og:locale" content="en_US" />
+
+        <!-- Twitter / X (falls back to og: for anything omitted) -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImageURL} />
+
+        <title>{title}</title>
+
+        <script is:inline>
+            function applyTheme() {
+                try {
+                    var saved = localStorage.getItem("theme");
+                    var prefersDark = window.matchMedia(
+                        "(prefers-color-scheme: dark)",
+                    ).matches;
+                    document.documentElement.dataset.theme =
+                        saved || (prefersDark ? "dark" : "light");
+                } catch (_) {
+                    document.documentElement.dataset.theme = "light";
+                }
+            }
+            applyTheme(); // initial load / refresh
+            document.addEventListener("astro:after-swap", applyTheme); // re-apply after each navigation
+        </script>
+    </head>
+
+    <body>
+        <a href="#main" class="sr-only">Skip to content</a>
+        <Navbar />
+        <slot />
+    </body>
+</html>
