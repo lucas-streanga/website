@@ -1,17 +1,135 @@
 ---
-
+// Colors/spacing all come from the tokens in styles/global.css.
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="viewport" content="width=device-width" />
-        <meta name="generator" content={Astro.generator} />
-        <title>Astro</title>
-    </head>
-    <body>
-        <h1>Hello, world!</h1>
-    </body>
-</html>
+<BaseLayout title="Lucas — Home" description="Personal site of Lucas.">
+    <main id="main">
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-text">
+                    <p class="eyebrow">Developer</p>
+                    <h1 class="hero-title">Hi, I'm Lucas.</h1>
+                    <p class="hero-lead">
+                        I build things with containers and edge networks, and I
+                        write about what I learn along the way. Welcome to my
+                        corner of the web.
+                    </p>
+                    <div class="actions">
+                        <a href="/blog" class="btn btn-primary">Read the blog</a
+                        >
+                        <a href="#about" class="btn btn-ghost">About me</a>
+                    </div>
+                </div>
+
+                <div class="hero-media">
+                    <!--
+            Add your photo later — swap this placeholder for:
+            <img src="/me.jpg" alt="Lucas" class="photo" width="320" height="320" />
+          -->
+                    <div class="photo photo-placeholder" aria-hidden="true">
+                        <span>Your photo</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</BaseLayout>
+
+<style>
+    .hero {
+        padding-block: clamp(var(--space-16), 8vw, var(--space-24));
+    }
+    .hero-grid {
+        display: grid;
+        gap: var(--space-12);
+        align-items: center;
+        grid-template-columns: 1.2fr 0.8fr;
+    }
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--color-accent);
+        margin-block-end: var(--space-4);
+    }
+    .hero-title {
+        font-size: var(--text-4xl);
+    }
+    .hero-lead {
+        margin-block-start: var(--space-6);
+        max-inline-size: 46ch;
+        font-size: var(--text-lg);
+        color: var(--color-text-muted);
+    }
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        margin-block-start: var(--space-8);
+    }
+
+    /* Buttons — primary uses the brand green; ghost is quiet. */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: var(--space-3) var(--space-6);
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: var(--text-sm);
+        text-decoration: none;
+        border: 1px solid transparent;
+        transition:
+            background-color 0.15s ease,
+            border-color 0.15s ease,
+            color 0.15s ease;
+    }
+    .btn-primary {
+        background-color: var(--color-brand);
+        color: var(--color-brand-contrast);
+    }
+    .btn-primary:hover {
+        background-color: var(--color-brand-hover);
+        color: var(--color-brand-contrast);
+    }
+    .btn-ghost {
+        color: var(--color-text);
+        border-color: var(--color-border);
+    }
+    .btn-ghost:hover {
+        border-color: var(--color-brand);
+        background-color: var(--color-surface-sunken);
+    }
+
+    /* Photo / placeholder — square with soft rounded corners. */
+    .photo {
+        inline-size: 100%;
+        max-inline-size: 320px;
+        aspect-ratio: 1;
+        border-radius: var(--radius-lg);
+        object-fit: cover;
+        margin-inline: auto;
+    }
+    .photo-placeholder {
+        display: grid;
+        place-items: center;
+        background-color: var(--color-surface-sunken);
+        border: 1px dashed var(--color-border);
+        color: var(--color-text-muted);
+        font-size: var(--text-sm);
+    }
+
+    /* Stack on narrow screens; photo first so it doesn't get pushed off-screen. */
+    @media (max-width: 48rem) {
+        .hero-grid {
+            grid-template-columns: 1fr;
+        }
+        .hero-media {
+            order: -1;
+        }
+        .photo {
+            max-inline-size: 220px;
+        }
+    }
+</style>

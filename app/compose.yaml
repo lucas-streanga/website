@@ -1,6 +1,9 @@
 services:
   astro:
-    build: .
+    build:
+      context: .
+    init: true # proper init: forwards signals, reaps zombies
+    command: ["npx", "astro", "dev"] # run astro directly, bypassing npm
     ports:
       - "4321:4321"
     volumes:

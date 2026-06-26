@@ -1,0 +1,104 @@
+---
+// ThemeToggle.astro
+// A single button that flips between light/dark and persists the choice.
+// The icons are swapped purely in CSS based on html[data-theme], so the
+// script only has to toggle one attribute + write to localStorage.
+---
+
+<button
+    id="theme-toggle"
+    type="button"
+    class="theme-toggle"
+    aria-label="Switch to dark mode"
+    aria-pressed="false"
+>
+    <!-- Sun: shown in dark mode (i.e. "switch to light") -->
+    <svg
+        class="icon icon-sun"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        aria-hidden="true"
+    >
+        <circle cx="12" cy="12" r="4"></circle>
+        <path
+            d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"
+        ></path>
+    </svg>
+    <!-- Moon: shown in light mode (i.e. "switch to dark") -->
+    <svg
+        class="icon icon-moon"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+    >
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+    </svg>
+</button>
+
+<style>
+    .theme-toggle {
+        display: inline-grid;
+        place-items: center;
+        inline-size: 2.5rem;
+        block-size: 2.5rem;
+        padding: 0;
+        cursor: pointer;
+        color: var(--color-text);
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        transition:
+            background-color 0.15s ease,
+            border-color 0.15s ease,
+            transform 0.15s ease;
+    }
+    .theme-toggle:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-1px);
+    }
+    .icon {
+        inline-size: 1.15rem;
+        block-size: 1.15rem;
+    }
+
+    /* Show the moon in light mode, the sun in dark mode. */
+    .icon-sun {
+        display: none;
+    }
+    :global(html[data-theme="dark"]) .icon-sun {
+        display: block;
+    }
+    :global(html[data-theme="dark"]) .icon-moon {
+        display: none;
+    }
+</style>
+
+<script>
+    const root = document.documentElement;
+    const toggle = document.getElementById("theme-toggle");
+
+    function currentTheme() {
+        return root.dataset.theme === "dark" ? "dark" : "light";
+    }
+
+    function applyTheme(theme: any) {
+        root.dataset.theme = theme;
+        localStorage.setItem("theme", theme);
+        const goingDark = theme === "dark";
+        toggle?.setAttribute(
+            "aria-label",
+            goingDark ? "Switch to light mode" : "Switch to dark mode",
+        );
+        toggle?.setAttribute("aria-pressed", String(goingDark));
+    }
+
+    // Sync the button's label to whatever the no-flash script already set.
+    applyTheme(currentTheme());
+
+    toggle?.addEventListener("click", () => {
+        applyTheme(currentTheme() === "dark" ? "light" : "dark");
+    });
+</script>

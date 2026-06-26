@@ -1,0 +1,50 @@
+---
+import ThemeToggle from "../components/ThemeToggle.astro";
+---
+
+<header class="navbar">
+    <div class="container nav-inner">
+        <a href="/" class="brand">streanga.com</a>
+        <nav class="nav-links" aria-label="Primary">
+            <a href="/">Home</a>
+            <a href="/blog">Blog</a>
+            <ThemeToggle />
+        </nav>
+    </div>
+</header>
+
+<style>
+    .navbar {
+        border-block-end: 1px solid var(--color-border);
+        background-color: var(--color-bg);
+    }
+    .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: var(--space-4);
+        block-size: 4rem;
+    }
+    .brand {
+        font-weight: 700;
+        font-size: var(--text-lg);
+        color: var(--color-text);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        flex-shrink: 0;
+    }
+    .nav-links a {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: var(--text-sm);
+    }
+    .nav-links a:hover {
+        color: var(--color-text);
+    }
+</style>

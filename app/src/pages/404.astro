@@ -1,0 +1,96 @@
+---
+// 404.astro — shown for any route that doesn't exist.
+// Astro builds this to 404.html, which Cloudflare Pages serves automatically.
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+    title="404 — Page not found"
+    description="That page couldn't be found."
+>
+    <main id="main" class="notfound">
+        <div class="container nf-inner">
+            <p class="code">404</p>
+            <h1 class="nf-title">This page wandered off.</h1>
+            <p class="nf-lead">
+                The link might be broken, or the page may have moved. Let's get
+                you back on track.
+            </p>
+            <div class="actions">
+                <a href="/" class="btn btn-primary">Back home</a>
+                <a href="/blog" class="btn btn-ghost">Read the blog</a>
+            </div>
+        </div>
+    </main>
+</BaseLayout>
+
+<style>
+    .notfound {
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding-block: var(--space-16);
+    }
+    .nf-inner {
+        max-inline-size: 34rem;
+    }
+
+    .code {
+        font-size: clamp(4rem, 12vw, 8rem);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: var(--tracking-tight);
+        color: var(--color-brand);
+    }
+    .nf-title {
+        font-size: var(--text-2xl);
+        margin-block-start: var(--space-2);
+    }
+    .nf-lead {
+        margin-block-start: var(--space-4);
+        margin-inline: auto;
+        max-inline-size: 42ch;
+        font-size: var(--text-lg);
+        color: var(--color-text-muted);
+    }
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        justify-content: center;
+        margin-block-start: var(--space-8);
+    }
+
+    /* Buttons — same treatment as the home page. */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: var(--space-3) var(--space-6);
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: var(--text-sm);
+        text-decoration: none;
+        border: 1px solid transparent;
+        transition:
+            background-color 0.15s ease,
+            border-color 0.15s ease,
+            color 0.15s ease;
+    }
+    .btn-primary {
+        background-color: var(--color-brand);
+        color: var(--color-brand-contrast);
+    }
+    .btn-primary:hover {
+        background-color: var(--color-brand-hover);
+        color: var(--color-brand-contrast);
+    }
+    .btn-ghost {
+        color: var(--color-text);
+        border-color: var(--color-border);
+    }
+    .btn-ghost:hover {
+        border-color: var(--color-brand);
+        background-color: var(--color-surface-sunken);
+    }
+</style>

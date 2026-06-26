@@ -1,0 +1,46 @@
+---
+// BaseLayout.astro — the HTML shell every page wraps in.
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {
+    title = "streanga.com",
+    description = "Lucas Streanga personal website.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content={description} />
+        <title>{title}</title>
+
+        <script is:inline>
+            (function () {
+                try {
+                    var saved = localStorage.getItem("theme");
+                    var prefersDark = window.matchMedia(
+                        "(prefers-color-scheme: dark)",
+                    ).matches;
+                    document.documentElement.dataset.theme =
+                        saved || (prefersDark ? "dark" : "light");
+                } catch (_) {
+                    document.documentElement.dataset.theme = "light";
+                }
+            })();
+        </script>
+    </head>
+
+    <body>
+        <a href="#main" class="sr-only">Skip to content</a>
+        <Navbar />
+        <slot />
+    </body>
+</html>
