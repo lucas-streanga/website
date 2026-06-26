@@ -79,26 +79,43 @@
 <script>
     const root = document.documentElement;
     const toggle = document.getElementById("theme-toggle");
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
 
-    function currentTheme() {
-        return root.dataset.theme === "dark" ? "dark" : "light";
+    // The theme the user is actually seeing: an explicit choice if one is
+    // set, otherwise whatever the OS prefers (the unset/CSS-driven state).
+    function effectiveTheme() {
+        if (root.dataset.theme === "dark" || root.dataset.theme === "light") {
+            return root.dataset.theme;
+        }
+        return mql.matches ? "dark" : "light";
     }
 
-    function applyTheme(theme: string) {
-        root.dataset.theme = theme;
-        localStorage.setItem("theme", theme);
-        const goingDark = theme === "dark";
+    // Update only the button's accessible state — no storage writes.
+    function syncButton(theme: string) {
+        const dark = theme === "dark";
         toggle?.setAttribute(
             "aria-label",
-            goingDark ? "Switch to light mode" : "Switch to dark mode",
+            dark ? "Switch to light mode" : "Switch to dark mode",
         );
-        toggle?.setAttribute("aria-pressed", String(goingDark));
+        toggle?.setAttribute("aria-pressed", String(dark));
     }
 
-    // Sync the button's label to whatever the no-flash script already set.
-    applyTheme(currentTheme());
+    // Pin an explicit choice (only ever called from a real click).
+    function setTheme(theme: string) {
+        root.dataset.theme = theme;
+        localStorage.setItem("theme", theme);
+        syncButton(theme);
+    }
+
+    syncButton(effectiveTheme());
 
     toggle?.addEventListener("click", () => {
-        applyTheme(currentTheme() === "dark" ? "light" : "dark");
+        setTheme(effectiveTheme() === "dark" ? "light" : "dark");
+    });
+
+    // If the visitor never toggled, follow live OS changes and keep the
+    // button label honest. Once they've chosen, their choice stands.
+    mql.addEventListener("change", () => {
+        if (!root.dataset.theme) syncButton(effectiveTheme());
     });
 </script>

@@ -1,62 +1,57 @@
-/* =========================================================================
-   DESIGN TOKENS
-   Two tiers:
-   1. Primitives  – raw values. Don't reference these directly in components.
-   2. Semantic    – meaning-based aliases (--color-bg, --color-brand, …).
-
-   Theme: pale sage-GREEN background in light mode, deep espresso-BROWN in
-   dark mode. Brand = calm eucalyptus green. Accent = muted violet.
-   Background lightness is chosen so text contrast clears WCAG AA.
-   ========================================================================= */
-
 :root {
     /* --- Primitives: LIGHT neutrals (green) --- */
-    --surface-light: #edf4ee; /* cards/raised — paler than the page */
-    --bg-light: #d2e3d5; /* the green page background */
-    --sunken-light: #c5dac9; /* insets, placeholders */
-    --ink: #15231d; /* near-black text (≈11:1 on the green bg) */
-    --ink-muted: #46564d; /* muted text (≈5.6:1 on the green bg) */
+    --surface-light: #edf4ee;
+    --bg-light: #d2e3d5;
+    --sunken-light: #c5dac9;
+    --ink: #15231d;
+    --ink-muted: #46564d;
     --line-light: #b9cdbd;
 
     /* --- Primitives: DARK neutrals (brown) --- */
-    --bg-dark: #2b211a; /* deep espresso page background */
-    --surface-dark: #392c23; /* cards/raised */
+    --bg-dark: #2b211a;
+    --surface-dark: #392c23;
     --sunken-dark: #463528;
-    --mist: #efe7dd; /* warm off-white text (≈13:1 on the brown bg) */
-    --mist-muted: #b6a899; /* muted text (≈6.9:1 on the brown bg) */
+    --mist: #efe7dd;
+    --mist-muted: #b6a899;
     --line-dark: #4a3a2d;
 
     --white: #ffffff;
 
-    /* --- Primitives: brand green (swap this ramp to recolor the identity) --- */
-    --green-500: #357258; /* calm eucalyptus, deep enough for white button text */
-    --green-600: #2a5a46; /* hover */
-    --green-300: #5cae8f; /* lighter, for dark mode */
+    /* --- Primitives: brand green --- */
+    --green-500: #357258;
+    --green-600: #2a5a46;
+    --green-300: #5cae8f;
     --green-200: #7cc4a7;
 
-    /* --- Primitives: violet accent (the spark) --- */
+    /* --- Primitives: violet accent --- */
     --violet-500: #5f4bb6;
     --violet-600: #4e3c9c;
     --violet-300: #a08ce6;
     --violet-200: #b6a6ee;
 
-    /* --- Semantic tokens: LIGHT theme (the default) --- */
-    --color-bg: var(--bg-light);
-    --color-surface: var(--surface-light);
-    --color-surface-sunken: var(--sunken-light);
-    --color-text: var(--ink);
-    --color-text-muted: var(--ink-muted);
-    --color-border: var(--line-light);
+    /* Default: support both schemes and follow the OS preference. */
+    color-scheme: light dark;
 
-    --color-brand: var(--green-500);
-    --color-brand-hover: var(--green-600);
-    --color-brand-contrast: var(--white);
+    /* --- Semantic tokens: defined ONCE; light-dark() resolves per color-scheme --- */
+    --color-bg: light-dark(var(--bg-light), var(--bg-dark));
+    --color-surface: light-dark(var(--surface-light), var(--surface-dark));
+    --color-surface-sunken: light-dark(var(--sunken-light), var(--sunken-dark));
+    --color-text: light-dark(var(--ink), var(--mist));
+    --color-text-muted: light-dark(var(--ink-muted), var(--mist-muted));
+    --color-border: light-dark(var(--line-light), var(--line-dark));
 
-    --color-accent: var(--violet-500);
-    --color-accent-hover: var(--violet-600);
-    --color-accent-contrast: var(--white);
+    --color-brand: light-dark(var(--green-500), var(--green-300));
+    --color-brand-hover: light-dark(var(--green-600), var(--green-200));
+    --color-brand-contrast: light-dark(var(--white), var(--bg-dark));
 
-    color-scheme: light;
+    --color-accent: light-dark(var(--violet-500), var(--violet-300));
+    --color-accent-hover: light-dark(var(--violet-600), var(--violet-200));
+    --color-accent-contrast: light-dark(var(--white), var(--bg-dark));
+
+    /* Shadows differ by theme too — composed from light-dark() color stops. */
+    --shadow-1: light-dark(rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.4));
+    --shadow-2: light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.5));
+    --shadow: 0 1px 2px var(--shadow-1), 0 6px 20px var(--shadow-2);
 
     /* --- Typography --- */
     --font-sans:
@@ -87,34 +82,23 @@
     /* --- Radii & elevation --- */
     --radius: 0.625rem;
     --radius-lg: 1rem;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 6px 20px rgb(0 0 0 / 0.08);
 
     /* --- Layout --- */
     --container: 64rem;
 }
 
-/* --- Semantic tokens: DARK theme overrides (brown) --- */
+/* An explicit choice pins the scheme, overriding the OS preference above. */
+:root[data-theme="light"] {
+    color-scheme: light;
+}
 :root[data-theme="dark"] {
-    --color-bg: var(--bg-dark);
-    --color-surface: var(--surface-dark);
-    --color-surface-sunken: var(--sunken-dark);
-    --color-text: var(--mist);
-    --color-text-muted: var(--mist-muted);
-    --color-border: var(--line-dark);
-
-    --color-brand: var(--green-300);
-    --color-brand-hover: var(--green-200);
-    --color-brand-contrast: var(--bg-dark);
-
-    --color-accent: var(--violet-300);
-    --color-accent-hover: var(--violet-200);
-    --color-accent-contrast: var(--bg-dark);
-
     color-scheme: dark;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 24px rgb(0 0 0 / 0.5);
 }
 
-/* Reset */
+/* =========================================================================
+   MODERN RESET (trimmed)
+   ========================================================================= */
+
 *,
 *::before,
 *::after {
@@ -201,7 +185,7 @@ a:hover {
     border: 0;
 }
 
-/* Button style */
+/* Button styles */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -246,6 +230,7 @@ a:hover {
     pointer-events: none;
 }
 
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
