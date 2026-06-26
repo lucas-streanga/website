@@ -84,7 +84,7 @@
         return root.dataset.theme === "dark" ? "dark" : "light";
     }
 
-    function applyTheme(theme: any) {
+    function applyTheme(theme: string) {
         root.dataset.theme = theme;
         localStorage.setItem("theme", theme);
         const goingDark = theme === "dark";
