@@ -41,6 +41,7 @@
     --color-accent: light-dark(var(--violet-500), var(--violet-300));
     --color-accent-hover: light-dark(var(--violet-600), var(--violet-200));
     --color-accent-contrast: light-dark(var(--white), var(--bg-dark));
+    --color-accent-strong: light-dark(var(--violet-600), var(--violet-200));
 
     --shadow-1: light-dark(rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.4));
     --shadow-2: light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.5));

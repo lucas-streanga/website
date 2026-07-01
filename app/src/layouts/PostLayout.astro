@@ -45,7 +45,12 @@ const formattedDate = date.toLocaleDateString("en-US", {
             </header>
 
             <figure class="post-cover">
-                <BlurImage src={cover} alt={coverAlt || title} priority />
+                <BlurImage
+                    src={cover}
+                    alt={coverAlt || title}
+                    sizes="(max-width: 56rem) 92vw, 56rem"
+                    priority
+                />
                 {
                     coverCaption && (
                         <figcaption set:html={inlineMarkdown(coverCaption)} />
@@ -91,7 +96,7 @@ const formattedDate = date.toLocaleDateString("en-US", {
     }
     .tag {
         font-size: var(--text-sm);
-        color: var(--color-accent);
+        color: var(--color-accent-strong);
         background-color: var(--color-surface-sunken);
         padding: 0.15rem 0.6rem;
         border-radius: 999px;
@@ -123,8 +128,6 @@ const formattedDate = date.toLocaleDateString("en-US", {
         font-size: var(--text-lg);
     }
 
-    /* Keep running text at a comfortable reading width (~44rem) while media —
-     images and diagrams — can use the full, wider article column. */
     .prose :global(p),
     .prose :global(h2),
     .prose :global(h3),
