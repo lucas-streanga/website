@@ -1,5 +1,4 @@
 :root {
-    /* --- Primitives: LIGHT neutrals (green) --- */
     --surface-light: #edf4ee;
     --bg-light: #d2e3d5;
     --sunken-light: #c5dac9;
@@ -7,7 +6,6 @@
     --ink-muted: #46564d;
     --line-light: #b9cdbd;
 
-    /* --- Primitives: DARK neutrals (brown) --- */
     --bg-dark: #2b211a;
     --surface-dark: #392c23;
     --sunken-dark: #463528;
@@ -17,22 +15,18 @@
 
     --white: #ffffff;
 
-    /* --- Primitives: brand green --- */
     --green-500: #357258;
     --green-600: #2a5a46;
     --green-300: #5cae8f;
     --green-200: #7cc4a7;
 
-    /* --- Primitives: violet accent --- */
     --violet-500: #5f4bb6;
     --violet-600: #4e3c9c;
     --violet-300: #a08ce6;
     --violet-200: #b6a6ee;
 
-    /* Default: support both schemes and follow the OS preference. */
     color-scheme: light dark;
 
-    /* --- Semantic tokens: defined ONCE; light-dark() resolves per color-scheme --- */
     --color-bg: light-dark(var(--bg-light), var(--bg-dark));
     --color-surface: light-dark(var(--surface-light), var(--surface-dark));
     --color-surface-sunken: light-dark(var(--sunken-light), var(--sunken-dark));
@@ -48,12 +42,10 @@
     --color-accent-hover: light-dark(var(--violet-600), var(--violet-200));
     --color-accent-contrast: light-dark(var(--white), var(--bg-dark));
 
-    /* Shadows differ by theme too — composed from light-dark() color stops. */
     --shadow-1: light-dark(rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.4));
     --shadow-2: light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.5));
     --shadow: 0 1px 2px var(--shadow-1), 0 6px 20px var(--shadow-2);
 
-    /* --- Typography --- */
     --font-sans:
         ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
         Arial, sans-serif;
@@ -69,7 +61,6 @@
     --leading-normal: 1.6;
     --tracking-tight: -0.02em;
 
-    /* --- Spacing scale --- */
     --space-2: 0.5rem;
     --space-3: 0.75rem;
     --space-4: 1rem;
@@ -79,25 +70,18 @@
     --space-16: 4rem;
     --space-24: 6rem;
 
-    /* --- Radii & elevation --- */
     --radius: 0.625rem;
     --radius-lg: 1rem;
 
-    /* --- Layout --- */
     --container: 64rem;
 }
 
-/* An explicit choice pins the scheme, overriding the OS preference above. */
 :root[data-theme="light"] {
     color-scheme: light;
 }
 :root[data-theme="dark"] {
     color-scheme: dark;
 }
-
-/* =========================================================================
-   MODERN RESET (trimmed)
-   ========================================================================= */
 
 *,
 *::before,
@@ -130,6 +114,7 @@ picture,
 svg {
     display: block;
     max-width: 100%;
+    height: auto;
 }
 input,
 button,
@@ -165,7 +150,6 @@ a:hover {
     border-radius: 4px;
 }
 
-/* Shared layout helpers */
 .container {
     width: 100%;
     max-width: var(--container);
@@ -185,7 +169,6 @@ a:hover {
     border: 0;
 }
 
-/* Button styles */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -222,7 +205,6 @@ a:hover {
     background-color: var(--color-surface-sunken);
 }
 
-/* Focus is handled globally by :focus-visible above. */
 .btn:disabled,
 .btn[aria-disabled="true"] {
     opacity: 0.55;
@@ -230,7 +212,6 @@ a:hover {
     pointer-events: none;
 }
 
-/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

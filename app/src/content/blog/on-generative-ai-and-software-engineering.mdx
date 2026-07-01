@@ -1,0 +1,79 @@
+---
+title: "On Generative AI & Software Engineering"
+date: "2026-06-26"
+description: "My thoughts on the current state of generative AI and how it impacts software engineering."
+tags: ["Gen AI", "Software Engineering"]
+cover: ./on-generative-ai-cover.png
+coverAlt: "Morgan McMichaels staring blankly."
+coverCaption: "Picture unrelated, I just like it. Courtesy of [The Pit Stop](https://www.youtube.com/watch?v=v1dZLYVAU8Y)."
+---
+
+import { Image } from "astro:assets";
+import Link from "../../components/Link.astro";
+import sdlc from "sdlc.png";
+
+A couple years ago, I predicted that generative AI will impact software engineering first, and the hardest. Of course, I don't expect anyone to believe me, I have no proof. But, this was my reasoning at the time, and I think its more or less the same now:
+
+## In The Beginning
+
+When generative AI first broke the mainstream with GPT 2.5, there was a lot of predictions about how it would change software. At first, the common thinking was that more and more functions would be outsourced to these AI tools. What that meant was that, instead of writing algorithms, we could just use this magic blackbox to make things happen. Like, maybe instead of writing a script to clean up some CSV file, we instead just pass it to ChatGPT and ask it to do our dirty work. We still see that mentality around today to some degree. Take Apple Intelligence, which will use Gen AI to provide summaries of texts and emails.
+
+But, we reached some hard walls with that approach very quickly. Gen AI has some fundamental problems that can't be fixed, the most poignant being hallucinations. Now, for something like text summaries on your iPhone, that might not matter. But for software that, you know, has an expectation of doing productive things for us, it quickly became unacceptable. Users have become accustomed to how computers and software "work" - they're obtuse, overly literal, but perfectly accurate. We would never expect our Excel workbook to occasionally get 2 + 2 wrong, but with Gen AI, that's exactly how it works.
+
+## A Match Made in Heaven
+
+So, what do we do about that? Well, turns out, Gen AI is really good at writing code. Like, *really* good. Which makes sense, because code in its nature is highly structured and parsable. The property of being good at coding solves most of the problems with Gen AI alone.
+
+For starters, we don't have to worry about hallucinations anymore. At least, not in the final product. Code goes through compilers and interpreters and runs on machines, so how it functions is already known ahead of time. Of course it's not really that simple. If it was, there would be no bugs or vulnerabilities. But if we combine the build tools with a strong and comprehensive testing suite, we're able to very confidently reason about the behavior of the software, while still leveraging Gen AI.
+
+We also don't have to worry about compute as much. Another problem with Gen AI is that it takes a truly incredible amount of compute to pull off. Using a prompt in place of an algorithm is orders of magnitude more expensive, and it typically requires a network request, too. If we were using Gen AI in place of code, it would quickly become untenable. But, if we ask the Gen AI to just write the code instead, then we get all the typical runtime performance we're accustomed to. That's a big deal, because in the past some people thought that personal computers of the future would just be "dumb terminals" for compute-heavy Gen AI. But they don't have to be, and in fact that's not really desirable for anyone.
+
+And, the last problem with Gen AI: data sovereignty. As it stands, the SOTA models are hosted on remote servers owned by OpenAI, Anthropic, *et al*. For many domains, that setup is not acceptable. But, sending *code* to those providers *is* acceptable. So, we can use Gen AI to write the applications, but keep customer data or any other sensitive data secret.
+
+## So, What Happens to Software Engineering?
+
+By now, you've seen the rise of so-called "vibe coding" and agentic workflows. For the first time ever, non-technical people are able to create software to solve their problems. For many engineers, this is scary to them. If product managers and whoever are able to prompt for software, then what am I around for? But I argue that the value of engineers did not decrease, and is actually the highest it's ever been. Let me explain why.
+
+While it is true that anyone can create software, the people best equiped to leverage Gen AI are still engineers. At it's core, Gen AI is a *velocity multiplier*. You can get more done, faster. What that doesn't cover is:
+
+- Is this software solving the right problem?
+- Is this software high quality?
+- Is this software secure?
+- Does this software provide the right value for our customers?
+
+Software engineering has never really been about coding - coding is just a means to an end. Software engineering is about the discipline and theory behind building software. How do we set up systems so that we can build software quickly, that works and provides the right value for our customers?
+
+Velocity is a vector; you can certainly be moving in the wrong direction. In fact, I'd say it's more common to be moving in the wrong direction than the right one with software. So, accelerating that velocity when you're already off-course doesn't help anything. It makes it much worse.
+
+## How Software Engineering Adapts
+
+<Image
+    src={sdlc}
+    alt="Software Development Life Cycle"
+    width="auto"
+    height="auto"
+    priority
+    class="photo"
+/>
+
+The biggest change to software engineering has been, and will continue to be, an expansion of our role. Pictured above is a typical and generic SDLC - Software Development Life Cycle. It varies from organization to organization, but all we really care about is the big picture.
+
+Traditionally, development sits right in the middle. After planning and requirements engineering, but before QA and delivery. But if we want engineers to truly unlock velocity gains from Gen AI, then we need to stretch them both left and right. Engineers need to work closely with the customer so they can iterate quickly, and they need to have the autonomy to own their features all the way to delivery. Otherwise, we just get hard bottlenecked where we've always gotten bottlenecked - on requirements and delivery. The SDLC is a "cycle", and we need to close the loop as much as possible if we want to iterate through the cycle quicker. Software is somewhat unique in how we approach it's development in that, most of the time, people don't really know what they want. But, they do know what they *don't* want, and we don't know what we don't know. So, being able to iterate quickly and provide prototypes has huge value for clients. And, despite the fact more code is written and often thrown away, velocity goes up. Because, the truth is, most code is destined for the trash bin anyway, and we need to be comfortable with that.
+
+I'm sure to many engineers reading this, this doesn't sound like anything new. And it's not - this is almost exactly the sentiment expressed in the <Link href="https://agilemanifesto.org/">original Agile Manifesto from 2001</Link>. Engineers need to be given the autonomy to put people first, to put products first.
+
+So, that begs the question: if we've known about this since 2001, why haven't we been doing it?
+
+## Office Politics
+
+Autonomy is threatening. There's a fear of engineers replacing management, and of engineers making mistakes. This mentality isn't completely wrong. Engineers are often greedy and selfish, and sometimes they will take shortcuts. Companies are naturally risk-averse, and I think they view engineers owning more of the SDLC as a risk. A product risk, a security risk, and quality risk. But risk-aversion can be a poison. You can be so risk-averse that you stop moving altogether. And that might be comfortable, but the market is changing. Consumers and businesses alike have no patience for companies that demand on sitting still. Their needs, too, are changing with the rise of Gen AI. And if you don't meet their needs, you will be left behind.
+
+SaaS isn't going anywhere. There will always be a need for high-quality software that solves people's problems. But the expectations will certainly rise. No longer will it be acceptable to provide barely functional software at an exhorbitant price.
+
+How do we solve this problem with the risks of autonomy? Management's go-to tool is *process*. Process is a natural trade-off for velocity. The thinking is if we introduce more process, and therefore more roadblocks, then there's more chances to catch mistakes and sloppy implementations. And, that's why we've seen the complete bastardization of Agile. We've transformed Agile into it's perfect antithesis - process heavy, full of rituals, and slow. But the proof is in the pudding. Is this actually better? Is our software higher quality? The thing about process is it builds *habits*. Habits become automatic, and then they lose value. Because the underlying value of process comes from the friction, and then the friction is eliminated once it becomes automatic. Code review becomes a LGTM affair. Standup becomes something you just have to do. Sprints stop making any sense, and are just filled out so management has something to look at. 
+
+That's not to say that these processes do not have any value. They do, particularly code review and QA. But we need to give engineers the autonomy to decide HOW to approach these processes. We need to have engineers have that investment, so they care. Code review needs to shift from a necessary evil, to a process where engineers feel comfortable expressing their mind. And QA needs the engineer treatment, too. No more boring clicking around with glazed over eyes. We need to let engineers run loose, automating QA, using tools like browser automation found in Pest. 
+
+And yes, it's true, doing this might lock management out. They might not understand these automated browser tests, it might be black magic to them. And that might make them nervous. But, as engineers, we're constantly on our feet, moving. We're learning new tools every day. And we never have the priviledge to say "well that's too complicated" and stay inside our Excel bubble or whatever.
+
+If engineers are to expand left and right, isn't it high time management and other business professionals dip their toes in the world of the technical?
