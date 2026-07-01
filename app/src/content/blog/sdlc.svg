@@ -1,0 +1,27 @@
+<svg viewBox="0 0 1800 450" xmlns="http://www.w3.org/2000/svg" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-label="Software Development Life Cycle: Analysis, Design, Development, Testing, Deployment, Maintenance">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4E4C6"/><stop offset="1" stop-color="#9AC8A1"/></linearGradient></defs>
+<path d="M30,140 L299,140 L354,225.0 L299,310 L30,310 Z" transform="translate(0,6)" fill="#1e3a2b" fill-opacity="0.08"/>
+<path d="M30,140 L299,140 L354,225.0 L299,310 L30,310 Z" fill="url(#g)" stroke="#83B58D" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="192.0" y="219.0" font-size="27" font-weight="700" fill="#1E3A2B" text-anchor="middle">Analysis</text>
+<text x="192.0" y="249.0" font-size="18.5" font-style="italic" fill="#3C5C49" text-anchor="middle">Requirements</text>
+<path d="M313,140 L582,140 L637,225.0 L582,310 L313,310 L368,225.0 Z" transform="translate(0,6)" fill="#1e3a2b" fill-opacity="0.08"/>
+<path d="M313,140 L582,140 L637,225.0 L582,310 L313,310 L368,225.0 Z" fill="url(#g)" stroke="#83B58D" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="475.0" y="219.0" font-size="27" font-weight="700" fill="#1E3A2B" text-anchor="middle">Design</text>
+<text x="475.0" y="249.0" font-size="18.5" font-style="italic" fill="#3C5C49" text-anchor="middle">Architecture</text>
+<path d="M596,140 L865,140 L920,225.0 L865,310 L596,310 L651,225.0 Z" transform="translate(0,6)" fill="#1e3a2b" fill-opacity="0.08"/>
+<path d="M596,140 L865,140 L920,225.0 L865,310 L596,310 L651,225.0 Z" fill="url(#g)" stroke="#83B58D" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="758.0" y="219.0" font-size="27" font-weight="700" fill="#1E3A2B" text-anchor="middle">Development</text>
+<text x="758.0" y="249.0" font-size="18.5" font-style="italic" fill="#3C5C49" text-anchor="middle">Build</text>
+<path d="M879,140 L1148,140 L1203,225.0 L1148,310 L879,310 L934,225.0 Z" transform="translate(0,6)" fill="#1e3a2b" fill-opacity="0.08"/>
+<path d="M879,140 L1148,140 L1203,225.0 L1148,310 L879,310 L934,225.0 Z" fill="url(#g)" stroke="#83B58D" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="1041.0" y="219.0" font-size="27" font-weight="700" fill="#1E3A2B" text-anchor="middle">Testing</text>
+<text x="1041.0" y="249.0" font-size="18.5" font-style="italic" fill="#3C5C49" text-anchor="middle">QA</text>
+<path d="M1162,140 L1431,140 L1486,225.0 L1431,310 L1162,310 L1217,225.0 Z" transform="translate(0,6)" fill="#1e3a2b" fill-opacity="0.08"/>
+<path d="M1162,140 L1431,140 L1486,225.0 L1431,310 L1162,310 L1217,225.0 Z" fill="url(#g)" stroke="#83B58D" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="1324.0" y="219.0" font-size="27" font-weight="700" fill="#1E3A2B" text-anchor="middle">Deployment</text>
+<text x="1324.0" y="249.0" font-size="18.5" font-style="italic" fill="#3C5C49" text-anchor="middle">Release</text>
+<path d="M1445,140 L1714,140 L1769,225.0 L1714,310 L1445,310 L1500,225.0 Z" transform="translate(0,6)" fill="#1e3a2b" fill-opacity="0.08"/>
+<path d="M1445,140 L1714,140 L1769,225.0 L1714,310 L1445,310 L1500,225.0 Z" fill="url(#g)" stroke="#83B58D" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="1607.0" y="219.0" font-size="27" font-weight="700" fill="#1E3A2B" text-anchor="middle">Maintenance</text>
+<text x="1607.0" y="249.0" font-size="18.5" font-style="italic" fill="#3C5C49" text-anchor="middle">Support</text>
+</svg>
