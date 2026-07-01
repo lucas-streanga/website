@@ -3,21 +3,18 @@ import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import { Font } from "astro:assets";
 import Navbar from "../components/Navbar.astro";
-
 interface Props {
     title?: string;
     description?: string;
     image?: string; // og:image — relative path or absolute URL; override per post
     type?: "website" | "article"; // og:type — "article" for blog posts
 }
-
 const {
     title = "streanga.com",
     description = "Personal site of Lucas — developer & writer.",
     image = "/og-default.png",
     type = "website",
 } = Astro.props;
-
 // Absolute URLs for canonical + social tags. Requires `site` in astro.config.mjs.
 // new URL(relativeOrAbsolute, base): a relative path resolves against the site,
 // an already-absolute URL is returned unchanged — so per-post overrides can be either.
@@ -33,43 +30,48 @@ const SITE_NAME = "streanga.com";
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Font cssVariable="--font-inter" preload />
         <Font cssVariable="--font-fraunces" preload />
-
         <!-- THEME SCRIPT (inline so it runs before first paint — no flash).
-         Only an EXPLICIT choice is written to data-theme; otherwise it's left
-         unset so CSS `color-scheme: light dark` follows the OS. Re-runs on
-         astro:after-swap because client-side navigation resets <html>. -->
+         Only an EXPLICIT choice is written; otherwise data-theme and the inline
+         color-scheme are cleared so CSS `color-scheme: light dark` follows the
+         OS. color-scheme is pinned inline so the correct scheme applies before
+         the external stylesheet loads. On view transitions we theme the INCOMING
+         document in astro:before-swap, before it paints, so navigation never
+         flashes the OS theme. -->
         <script is:inline>
             (function () {
-                function applyTheme() {
+                function choice() {
                     try {
-                        var saved = localStorage.getItem("theme");
-                        if (saved === "dark" || saved === "light") {
-                            document.documentElement.dataset.theme = saved;
-                        } else {
-                            document.documentElement.removeAttribute(
-                                "data-theme",
-                            );
-                        }
+                        var v = localStorage.getItem("theme");
+                        return v === "dark" || v === "light" ? v : null;
                     } catch (_) {
-                        document.documentElement.removeAttribute("data-theme");
+                        return null;
                     }
                 }
-                applyTheme();
-                document.addEventListener("astro:after-swap", applyTheme);
+                function apply(root) {
+                    var c = choice();
+                    if (c) {
+                        root.dataset.theme = c;
+                        root.style.colorScheme = c;
+                    } else {
+                        root.removeAttribute("data-theme");
+                        root.style.removeProperty("color-scheme");
+                    }
+                }
+                apply(document.documentElement);
+                document.addEventListener("astro:before-swap", function (e) {
+                    apply(e.newDocument.documentElement);
+                });
             })();
         </script>
-
         <!-- Primary meta -->
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
-
         <!-- Favicons. The SVG covers modern browsers; add the PNG/ICO files to
          /public if you want broader coverage (see notes). -->
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
         <!-- Open Graph (Slack, Discord, iMessage, Facebook, LinkedIn, …) -->
         <meta property="og:type" content={type} />
         <meta property="og:title" content={title} />
@@ -79,16 +81,13 @@ const SITE_NAME = "streanga.com";
         <meta property="og:image:alt" content={title} />
         <meta property="og:site_name" content={SITE_NAME} />
         <meta property="og:locale" content="en_US" />
-
         <!-- Twitter / X (falls back to og: for anything omitted) -->
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={ogImageURL} />
-
         <ClientRouter />
     </head>
-
     <body>
         <a href="#main" class="sr-only">Skip to content</a>
         <Navbar />

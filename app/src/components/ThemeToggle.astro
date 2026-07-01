@@ -1,8 +1,5 @@
 ---
-// ThemeToggle.astro
-// A single button that flips between light/dark and persists the choice.
-// The icons are swapped purely in CSS based on html[data-theme], so the
-// script only has to toggle one attribute + write to localStorage.
+
 ---
 
 <button
@@ -100,9 +97,12 @@
         toggle?.setAttribute("aria-pressed", String(dark));
     }
 
-    // Pin an explicit choice (only ever called from a real click).
+    // Pin an explicit choice (only ever called from a real click). Sets the
+    // inline color-scheme too, matching the head script — otherwise a stale
+    // inline value would override the CSS on the next toggle.
     function setTheme(theme: string) {
         root.dataset.theme = theme;
+        root.style.colorScheme = theme;
         localStorage.setItem("theme", theme);
         syncButton(theme);
     }
