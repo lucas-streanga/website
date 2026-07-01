@@ -1,0 +1,33 @@
+---
+interface Props {
+    href: string;
+    newTab?: boolean;
+    class?: string;
+}
+
+const { href, newTab, class: className, ...rest } = Astro.props;
+
+// Only absolute http(s) URLs are candidates for "external". If a site origin is
+// configured, links to that same origin are treated as internal.
+let isExternal = false;
+if (/^https?:\/\//i.test(href)) {
+    try {
+        const url = new URL(href);
+        isExternal = Astro.site ? url.origin !== Astro.site.origin : true;
+    } catch {
+        isExternal = false;
+    }
+}
+
+const openNew = newTab ?? isExternal;
+---
+
+<a
+    href={href}
+    target={openNew ? "_blank" : undefined}
+    rel={openNew ? "noopener noreferrer" : undefined}
+    class={className}
+    {...rest}
+>
+    <slot />
+</a>

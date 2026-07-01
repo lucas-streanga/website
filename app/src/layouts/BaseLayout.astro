@@ -1,8 +1,8 @@
 ---
-// BaseLayout.astro — the HTML shell every page wraps in.
 import "../styles/global.css";
-import Navbar from "../components/Navbar.astro";
 import { ClientRouter } from "astro:transitions";
+import { Font } from "astro:assets";
+import Navbar from "../components/Navbar.astro";
 
 interface Props {
     title?: string;
@@ -13,7 +13,7 @@ interface Props {
 
 const {
     title = "streanga.com",
-    description = "Personal site of Lucas.",
+    description = "Personal site of Lucas — developer & writer.",
     image = "/og-default.png",
     type = "website",
 } = Astro.props;
@@ -29,21 +29,43 @@ const SITE_NAME = "streanga.com";
 <!doctype html>
 <html lang="en">
     <head>
-        <noscript>
-            <style>
-                #theme-toggle {
-                    display: none;
-                }
-            </style>
-        </noscript>
-        <ClientRouter />
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Font cssVariable="--font-inter" preload />
+        <Font cssVariable="--font-fraunces" preload />
+
+        <!-- THEME SCRIPT (inline so it runs before first paint — no flash).
+         Only an EXPLICIT choice is written to data-theme; otherwise it's left
+         unset so CSS `color-scheme: light dark` follows the OS. Re-runs on
+         astro:after-swap because client-side navigation resets <html>. -->
+        <script is:inline>
+            (function () {
+                function applyTheme() {
+                    try {
+                        var saved = localStorage.getItem("theme");
+                        if (saved === "dark" || saved === "light") {
+                            document.documentElement.dataset.theme = saved;
+                        } else {
+                            document.documentElement.removeAttribute(
+                                "data-theme",
+                            );
+                        }
+                    } catch (_) {
+                        document.documentElement.removeAttribute("data-theme");
+                    }
+                }
+                applyTheme();
+                document.addEventListener("astro:after-swap", applyTheme);
+            })();
+        </script>
+
+        <!-- Primary meta -->
+        <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
 
         <!-- Favicons. The SVG covers modern browsers; add the PNG/ICO files to
-             /public if you want broader coverage (see notes). -->
+         /public if you want broader coverage (see notes). -->
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -64,24 +86,7 @@ const SITE_NAME = "streanga.com";
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={ogImageURL} />
 
-        <title>{title}</title>
-
-        <script is:inline>
-            function applyTheme() {
-                try {
-                    var saved = localStorage.getItem("theme");
-                    var prefersDark = window.matchMedia(
-                        "(prefers-color-scheme: dark)",
-                    ).matches;
-                    document.documentElement.dataset.theme =
-                        saved || (prefersDark ? "dark" : "light");
-                } catch (_) {
-                    document.documentElement.dataset.theme = "light";
-                }
-            }
-            applyTheme(); // initial load / refresh
-            document.addEventListener("astro:after-swap", applyTheme); // re-apply after each navigation
-        </script>
+        <ClientRouter />
     </head>
 
     <body>
