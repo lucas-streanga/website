@@ -2,10 +2,15 @@ services:
   astro:
     build:
       context: .
-    init: true # proper init: forwards signals, reaps zombies
-    command: ["npx", "astro", "dev"] # run astro directly, bypassing npm
+      dockerfile:
+        Containerfile # Zed's parser looks for "Dockerfile" by
+        # default; name it so it can read the base
+        # image. Podman uses this field too.
+    init: true # forwards signals, reaps zombies
+    command: ["npx", "astro", "dev"] # run astro directly so it receives SIGTERM
     ports:
-      - "4321:4321"
+      - target: 4321 # long form: Zed rejects the "4321:4321" string
+        published: "4321"
     volumes:
       - ./:/app
       - /app/node_modules
