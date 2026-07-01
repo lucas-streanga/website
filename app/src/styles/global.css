@@ -47,9 +47,9 @@
     --shadow: 0 1px 2px var(--shadow-1), 0 6px 20px var(--shadow-2);
 
     --font-sans:
-        ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
-        Arial, sans-serif;
-    --font-display: var(--font-sans);
+        "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+    --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
 
     --text-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.95rem);
     --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
@@ -94,6 +94,7 @@
 
 html {
     -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
 }
 
 body {
@@ -128,8 +129,9 @@ h1,
 h2,
 h3 {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
     line-height: var(--leading-tight);
-    letter-spacing: var(--tracking-tight);
+    letter-spacing: normal;
     text-wrap: balance;
 }
 p {
