@@ -1,8 +1,7 @@
 ---
-import "@fontsource-variable/inter";
-import "@fontsource-variable/fraunces";
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
+import { Font } from "astro:assets";
 import Navbar from "../components/Navbar.astro";
 
 interface Props {
@@ -32,6 +31,8 @@ const SITE_NAME = "streanga.com";
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Font cssVariable="--font-inter" preload />
+        <Font cssVariable="--font-fraunces" preload />
 
         <!-- THEME SCRIPT (inline so it runs before first paint — no flash).
          Only an EXPLICIT choice is written to data-theme; otherwise it's left
