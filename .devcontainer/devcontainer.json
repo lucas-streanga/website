@@ -1,21 +1,21 @@
 {
-  // Opens the project inside your existing Podman container so the language
-  // server runs where node_modules and .astro/ types already live.
-  "name": "streanga-astro",
+    // Opens the project inside your existing Podman container so the language
+    // server runs where node_modules and .astro/ types already live.
+    "name": "streanga-astro",
 
-  // Path to your compose file, RELATIVE to this .devcontainer/ folder.
-  // Use "../compose.yaml" if you open app/ in Zed (recommended);
-  // use "../app/compose.yaml" if you open the parent website/ folder.
-  "dockerComposeFile": "../compose.yaml",
+    // Path to your compose file, RELATIVE to this .devcontainer/ folder.
+    // Use "../compose.yaml" if you open app/ in Zed (recommended);
+    // use "../app/compose.yaml" if you open the parent website/ folder.
+    "dockerComposeFile": "../compose.yaml",
 
-  "service": "astro",
-  "workspaceFolder": "app",
+    "service": "astro",
+    "workspaceFolder": "app",
 
-  // Keep the container alive for the editor instead of running the service's
-  // `npx astro dev` command (which would exit and stop the container). Start
-  // the dev server yourself in a Zed terminal once attached.
-  "overrideCommand": true,
+    // Keep the container alive for the editor instead of running the service's
+    // `npx astro dev` command (which would exit and stop the container). Start
+    // the dev server yourself in a Zed terminal once attached.
+    "overrideCommand": true,
 
-  // Stop the compose stack when you close the project ("none" to leave it up).
-  "shutdownAction": "stopCompose",
+    // Stop the compose stack when you close the project ("none" to leave it up).
+    "shutdownAction": "stopCompose"
 }
