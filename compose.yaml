@@ -1,0 +1,13 @@
+services:
+  astro:
+    build:
+      context: . # repo root: Containerfile COPYs use app/ prefixes
+      dockerfile: Containerfile
+    init: true
+    command: ["sleep", "infinity"]
+    ports:
+      - target: 4321
+        published: "4321"
+    volumes:
+      - ./:/website:z # the whole repo, .git included
+      - /website/app/node_modules # mask moves with the app path

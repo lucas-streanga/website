@@ -9,7 +9,7 @@
   "dockerComposeFile": "../compose.yaml",
 
   "service": "astro",
-  "workspaceFolder": "/app",
+  "workspaceFolder": "app",
 
   // Keep the container alive for the editor instead of running the service's
   // `npx astro dev` command (which would exit and stop the container). Start
