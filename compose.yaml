@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: Containerfile
       shm_size: "1gb"
+    image: localhost/website-dev:latest # tag the shared image so `claude` can reuse it
     init: true
     command:
       [
@@ -17,4 +18,45 @@ services:
         published: "4321"
     volumes:
       - ./:/website:z
-      - /website/app/node_modules
+      - node_modules:/website/app/node_modules # shared with the claude service (below)
+
+  # Claude Code sandbox — same image as astro, so Claude gets the exact Astro + chromium
+  # toolchain and can run the app's own build / Lighthouse. No separate build: it reuses
+  # astro's image tag, so BUILD ASTRO FIRST:
+  #   podman compose build                    # builds + tags the shared image (via astro)
+  #   podman compose run --rm claude          # interactive Claude at the repo root
+  #   podman compose run --rm claude bash     # shell in the sandbox
+  claude:
+    profiles: ["cli"]
+    image: localhost/website-dev:latest # reuse astro's image; do not rebuild
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /website # repo root (git lives here); app is under app/
+    # Run as the image's uid-1000 `node` user and map it to your host user, so files Claude
+    # edits in the bind mount stay owned by YOU — not root, not a stray subuid.
+    user: "node"
+    userns_mode: "keep-id"
+    # Only needed if you want Claude to launch chromium (e.g. run the app's Lighthouse).
+    # Drop both if Claude never drives a browser.
+    security_opt: ["seccomp=unconfined"]
+    shm_size: "1gb" # chromium needs a real /dev/shm at RUNTIME
+    command: ["claude"]
+    volumes:
+      # Same repo mount as astro (whol Jump to bottom (ctrl+End) ↓ abels the shared bind mount.
+      # - ./:/website:z
+      # SAME named volume as astro -> Claude always sees the exact deps the app has, no drift.
+      # astro (root) installs into it; Claude reads it. Do `npm install` in the astro container.
+      - node_modules:/website/app/node_modules
+      # Persisted auth/config across rebuilds. Named volume -> NO ':z'; cleared only by `down -v`.
+      - claude-config:/home/node/.claude
+    environment:
+      HOME: /home/node # `user:` alone doesn't set HOME; be explicit
+      CLAUDE_CONFIG_DIR: /home/node/.claude
+      DISABLE_AUTOUPDATER: "1"
+      # Prefer API-key auth over browser login? Pass it through from your shell, don't hardcode:
+      # ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+
+volumes:
+  claude-config:
+  node_modules:
