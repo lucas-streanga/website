@@ -1,7 +1,7 @@
 ---
-title: "Luna Log 1"
-date: "2026-07-06"
-description: "Luna Devlog 1"
+title: "Oh Luna, my Luna: Welcome"
+date: "2026-07-07"
+description: "Here I cover designing my new programmin language, from motivations, hard decisions, to implementation design."
 tags: ["Programming Language", "Type System", "Language Design"]
 cover: ./on-generative-ai-cover.png
 coverAlt: "Morgan McMichaels staring blankly."
@@ -13,4 +13,31 @@ import { lunaGrammar } from "../../lib/shiki-luna";
 import { Code } from "astro:components";
 import aTasteOfLuna from '../../assets/snippets/a-taste-of-luna.luna?raw';
 
+# Luna: What is it?
+Okay, let's address the elephant in the room: Luna is vaporware. No implementation exists, outside of an incredibly barebones (and buggy) syntax highlighter so I can make this blog.
+
+So, this blog is really just a little taste. I'm not trying to "sell" anything, both monetarily or socially. Language design just tickles my brain, and now that I'm doing in-patient chemo (long story, another blog post eventually), I certainly have the time. These ideas have been bouncing around my head for at least half a decade; its time to put pen to paper.
+
+# A Nibble
 <LunaCode code={aTasteOfLuna} title=''/>
+
+I'll explain what this is doing at a high-level:
+- `import`ing some `std` modules.
+- Running main, which uses the `io` and `argv` **capabilities** and can throw.
+- Opening some files and parsing them as json.
+- Matching the structure and typing of the result table, at the same time.
+
+Whoa, that's a lot going on. I just threw random words at you. But before we begin to address this pile of source code, we have to understand *why* I made the desicisions I made.
+
+# Programming Languages: a Taxonomy
+
+There exists four distinct kinds of programming languages:
+
+| Name | Read? | Write? | Buggy? | Agentic Coding? | Examples | Result |
+|-|-|-|-|-|-|-|
+| Extremely Restrictive | Hard | Hard | Least Buggy | Good | Rust... that's it | Good for AI, but a huge pain in the ass overall. Slow velocity across the board, AI included |
+| Somewhat Restrictive | Easy | Medium | Medium | Good, not great | C#, Java Go, Modern PHP | Result: easy overall, but many of these languages fall into OOP-isms. They also miss simple garauntees around concurrency and safety. |
+| Not Restrictive | Hard | Easy | Pretty Buggy | Baaad | Old PHP, JS, Ruby | Your program will not work if its over 100 lines. You will be chasing the same bugs over and over again. AI will struggle to expand your codebas safety due to the dynamic nature of the language. Good luck! |
+| Jesus Christ Save Me | Hard | Hard | HA! | Give it up | C, C++ | Your program will not work if its over 10 lines. It might seem like it works - it doesn't. You might get the appearance of a type system - you don't. Your code will have bugs so invisible they can lay around for 20 years. |
+
+Yeah, this table is tongue-in-cheek. Of course there's more stuff out there, but I think really most will fall into one of these categories. 
