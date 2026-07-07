@@ -7,7 +7,6 @@
    && apt-get install -y --no-install-recommends \
         chromium fonts-liberation \
         git ca-certificates \
-        wl-clipboard \
     && rm -rf /var/lib/apt/lists/*
   ENV CHROME_PATH=/usr/bin/chromium
 

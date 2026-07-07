@@ -55,18 +55,11 @@ services:
       - node_modules:/website/app/node_modules
       # Persisted auth/config across rebuilds. Named volume -> NO ':z'; cleared only by `down -v`.
       - claude-config:/home/node/.claude
-      # Host Wayland socket -> Claude's Ctrl+V image paste can call wl-paste against your
-      # desktop clipboard. Do NOT add :z/:Z here — that would rela
-      # and break clipboard for your whole GNOME session.
-      - ${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY:-wayland-0}:/run/userand-0}
     environment:
       <<: *node-env
       HOME: /home/node # `user:` alone doesn't set HOME; be explicit
       CLAUDE_CONFIG_DIR: /home/node/.claude
       DISABLE_AUTOUPDATER: "1"
-      # Wayland clipboard for image paste (pairs with the socket mimage)
-      WAYLAND_DISPLAY: "${WAYLAND_DISPLAY:-wayland-0}"
-      XDG_RUNTIME_DIR: /run/user/1000
       # Prefer API-key auth over browser login? Pass it through from your shell, don't hardcode:
       # ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
 

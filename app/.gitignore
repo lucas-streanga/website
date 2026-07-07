@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# local scratch drop (screenshots handed to Claude, etc.) — never committed
+scratch/

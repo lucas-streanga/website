@@ -7,6 +7,7 @@ Both the website and you (Claude) run inside a **Podman container**. Practical c
 - Hot reload relies on filesystem polling (`vite.server.watch.usePolling: true`) because native inotify events don't cross the bind mount reliably. Leave it on.
 - The port is fixed at `4321` with `strictPort: true`, so the server fails loudly rather than drifting to another port. Don't assume a different port is in use.
 - `node_modules` is a named volume mounted on top of the source, not the host's copy.
+- **Handing images to Claude:** clipboard paste doesn't work (the container has no access to the host's Wayland clipboard, by design). Instead, drop the image on the host into `app/scratch/` (gitignored) and reference it by path, e.g. `scratch/shot.png` — Claude reads image files directly.
 
 ## Project structure
 
