@@ -1,7 +1,35 @@
 import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
 
+// Wrap every GFM table in <div class="table-wrap"> so wide tables can scroll on
+// narrow screens and take the same card frame as code blocks (see PostLayout).
+function rehypeWrapTables() {
+  return (tree) => {
+    const walk = (node) => {
+      if (!node.children) return;
+      node.children.forEach((child, i) => {
+        if (child.type === "element" && child.tagName === "table") {
+          node.children[i] = {
+            type: "element",
+            tagName: "div",
+            properties: { className: ["table-wrap"] },
+            children: [child],
+          };
+        } else {
+          walk(child);
+        }
+      });
+    };
+    walk(tree);
+  };
+}
+
 export default defineConfig({
+  // Applies to .md and .mdx (MDX inherits markdown config by default).
+  markdown: {
+    rehypePlugins: [rehypeWrapTables],
+  },
+
   // Required for absolute URLs in canonical/Open Graph tags (and sitemaps).
   site: "https://streanga.com",
 
