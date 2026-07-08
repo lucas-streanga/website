@@ -1,7 +1,7 @@
 ---
 title: "Oh Luna, my Luna: Welcome"
 date: "2026-07-07"
-description: "Here I cover designing my new programmin language, from motivations, hard decisions, to implementation design."
+description: "Here I cover designing my new programming language, from motivations, hard decisions, to implementation design."
 tags: ["Programming Language", "Type System", "Language Design"]
 cover: ./on-generative-ai-cover.png
 coverAlt: "Morgan McMichaels staring blankly."
@@ -9,17 +9,14 @@ coverCaption: "Picture unrelated, I just like it. Courtesy of [The Pit Stop](htt
 ---
 
 import LunaCode from "../../components/LunaCode.astro";
-import { lunaGrammar } from "../../lib/shiki-luna";
-import { Code } from "astro:components";
-import aTasteOfLuna from '../../assets/snippets/a-taste-of-luna.luna?raw';
 
 # Luna: What is it?
 Okay, let's address the elephant in the room: Luna is vaporware. No implementation exists, outside of an incredibly barebones (and buggy) syntax highlighter so I can make this blog.
 
-So, this blog is really just a little taste. I'm not trying to "sell" anything, both monetarily or socially. Language design just tickles my brain, and now that I'm doing in-patient chemo (long story, another blog post eventually), I certainly have the time. These ideas have been bouncing around my head for at least half a decade; its time to put pen to paper.
+So, this blog is really just a little taste. I'm not trying to "sell" anything, both monetarily or socially. Language design just tickles my brain, and now that I'm doing in-patient chemo (long story, another blog post eventually), I certainly have the time. These ideas have been bouncing around my head for at least half a decade; it's time to put pen to paper.
 
 # A Nibble
-<LunaCode code={aTasteOfLuna} title=''/>
+<LunaCode name="a-taste-of-luna" />
 
 I'll explain what this is doing at a high-level:
 - `import`ing some `std` modules.
@@ -27,7 +24,7 @@ I'll explain what this is doing at a high-level:
 - Opening some files and parsing them as json.
 - Matching the structure and typing of the result table, at the same time.
 
-Whoa, that's a lot going on. I just threw random words at you. But before we begin to address this pile of source code, we have to understand *why* I made the desicisions I made.
+Whoa, that's a lot going on. I just threw random words at you. But before we begin to address this pile of source code, we have to understand *why* I made the decisions I made.
 
 # Programming Languages: a Taxonomy
 
@@ -57,6 +54,6 @@ Ahh, but you see, there's a second axis we haven't considered: *check time*
 | Compile-time | Good | Good | Less so | C#, Rust, Java |
 | Run-time | Bad | Bad | More so | Python, PHP, TS |
 
-All of these languages have type garauntees, to an extent. But *where* that checking happens matters. When we check more at compile-time, we give AI an opportunity to agentically correct it's code. But at run-time, the AI is just guessing. Unit tests help, sure, but now you're ballooning your unit tests not with logic checks, but with type checks. And we've seen how this ends up: you get high coverage, because you're running code and checking types, but nothing actually *works* because no logic is tested. 
+All of these languages have type guarantees, to an extent. But *where* that checking happens matters. When we check more at compile-time, we give AI an opportunity to agentically correct its code. But at run-time, the AI is just guessing. Unit tests help, sure, but now you're ballooning your unit tests not with logic checks, but with type checks. And we've seen how this ends up: you get high coverage, because you're running code and checking types, but nothing actually *works* because no logic is tested. 
 
 So, there's a fundamental tension: when we make a language less restrictive, we can make it easier to read and write. But if we make a language *too* restrictive, we roll back around: it's hard for humans to read, and hard for humans and AI to write (humans more so).

@@ -83,14 +83,21 @@ const source = raw.replace(/^\n+|\s+$/g, "");
         <Code
             code={source}
             lang={lunaGrammar}
-            themes={{ light: "vitesse-light", dark: "everforest-dark" }}
+            themes={{ light: "everforest-dark", dark: "everforest-dark" }}
             defaultColor={false}
         />
-        <!-- Theme note: vitesse-light replaces everforest-light for contrast
-         (everforest's #DFA000-on-cream strings sit near 2.4:1, well under
-         WCAG AA 4.5:1; vitesse-light keeps the green identity at ~4.5-5:1).
-         Comments stay deliberately muted in every theme; if they must pass
-         AA too, prefer github-light-high-contrast over per-token overrides. -->
+        <!-- Theme note: everforest-dark in BOTH site modes (both `themes` keys are
+         the same on purpose) — the code card is a deliberate always-dark "embedded
+         terminal". One theme across modes is what makes the syntax hues identical
+         on toggle; a light variant can't match it. everforest-LIGHT is too low
+         contrast (gold strings ~1.9:1 on any light bg), and readable warm light
+         themes (gruvbox, ayu) don't share everforest's hue mapping, so the palette
+         jumped on toggle. The card stays dark in both site modes; only the backdrop
+         hue follows the page via --color-code-surface — pine-green in light (with
+         the mint page), warm brown in dark. everforest-dark clears AA on both
+         (~L0.03): keywords ~4.5:1, numbers/operators ~5.5, functions ~6.3, strings
+         ~6.9, identifiers ~7.5; the muted comments sit at ~3.8. Chrome text uses
+         everforest's fg cream (--color-code-fg) for a crisp ~6.8:1 on the strip. -->
         <button class="luna-code__copy" type="button" data-code={source}
             >Copy</button
         >
@@ -115,9 +122,10 @@ const source = raw.replace(/^\n+|\s+$/g, "");
 <style>
     /* Reads the host site's tokens (global.css) with quiet standalone fallbacks. */
     .luna-code {
-        --lc-border: var(--color-border, #4a3a2d);
-        --lc-chrome-bg: var(--color-surface-sunken, #463528);
-        --lc-chrome-fg: var(--color-text-muted, #b6a899);
+        --lc-border: var(--color-code-border, #4a3a2d);
+        --lc-chrome-bg: var(--color-code-chrome, #463528);
+        --lc-chrome-fg: var(--color-code-fg, #b6a899);
+        --lc-code-bg: var(--color-code-surface, #3f3025);
         --lc-radius: var(--radius, 0.625rem);
         --lc-font: var(
             --luna-code-font,
@@ -132,6 +140,7 @@ const source = raw.replace(/^\n+|\s+$/g, "");
         border: 1px solid var(--lc-border);
         border-radius: var(--lc-radius);
         overflow: hidden;
+        background: var(--lc-code-bg);
         box-shadow: var(--shadow, none);
     }
 
@@ -149,21 +158,23 @@ const source = raw.replace(/^\n+|\s+$/g, "");
         position: relative;
     }
 
-    /* Dual-theme switching via the site's own mechanism: shiki emits
-     --shiki-light/--shiki-dark per token (defaultColor: false), and
-     light-dark() follows color-scheme, which html[data-theme] sets.
-     Selectors target pre/span directly, NOT a class: Astro's <Code>
-     renames shiki's `.shiki` to `.astro-code`, and element selectors
-     under our own scope are immune to either name. */
+    /* Syntax colors are shiki's tokens: it emits --shiki-light/--shiki-dark
+     per token (defaultColor: false), resolved with light-dark(), which follows
+     color-scheme (html[data-theme] sets it). The BACKGROUND, however, is ours
+     (see the pre rule below), not shiki's theme background. Selectors target
+     pre/span directly, NOT a class: Astro's <Code> renames shiki's `.shiki` to
+     `.astro-code`, and element selectors under our scope are immune to both. */
     .luna-code__body :global(pre),
     .luna-code__body :global(pre span) {
         color: light-dark(var(--shiki-light), var(--shiki-dark));
     }
-    .luna-code__body :global(pre) {
-        background-color: light-dark(
-            var(--shiki-light-bg),
-            var(--shiki-dark-bg)
-        ) !important;
+    /* Our own surface token, not shiki's theme background (pure white in
+     light, a cool grey in dark — both clash with the mint/warm palette).
+     The leading `.luna-code` lifts specificity above PostLayout's
+     `.prose :global(pre)`, so no !important is needed and the two rules
+     no longer flip on first paint. */
+    .luna-code .luna-code__body :global(pre) {
+        background-color: var(--lc-code-bg);
         transition:
             background-color 0.2s ease,
             color 0.2s ease;
