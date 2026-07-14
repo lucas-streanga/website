@@ -1,0 +1,16 @@
+// Standard exception unwinding
+try {
+    let result = someFn(0);
+} catch (e: error) {
+  match (@e) {
+    parseError => die('Parse error occured!'),
+    _          => die('An unknown error occured!')
+  };
+}
+
+// OR we use errors as values
+let result = try someFn(0);
+let message = match (@result) {
+  int   => 'Successfully parsed an int.',
+  _     => 'Parse error occured!',
+};

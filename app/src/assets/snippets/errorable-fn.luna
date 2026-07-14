@@ -1,0 +1,4 @@
+const someFn = fn (num: int): int! {
+    throw parseError() if (num == 0);
+    return num;
+};

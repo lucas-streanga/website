@@ -1,5 +1,5 @@
 ---
-title: "Oh Luna, my Luna: Welcome"
+title: "Oh Luna, my Luna"
 date: "2026-07-07"
 description: "Here I cover designing my new programming language, from motivations, hard decisions, to implementation design."
 tags: ["Programming Language", "Type System", "Language Design"]
@@ -42,7 +42,7 @@ Okay, I'll admit: this table is rage-bait. I didn't even include some programmin
 But, it does lend up some key insights:
 
 - Extremely restrictive languages are both hard to read and write. The read overhead comes from the syntactic and semantic cost. The write overhead comes from refactoring; even simple refactors in Rust can result in massive code changes.
-- The less restrictive we make a language, the easier it is to read and write... to a degree. Eventually reading becomes impossible at an application-sided level. There's far too much to keep in your head. And now you have to live in debugger and employ maximum TDD.
+- The less restrictive we make a language, the easier it is to read and write... to a degree. Eventually reading becomes impossible at an application  level. There's far too much to keep in your head. And now you have to live in debugger and employ maximum TDD.
 - Don't use C or C++, they're basically just bad. I love C++ - I would never write anything serious in C++ today.
 
 Ahh, but you see, there's a second axis we haven't considered: *check time*
@@ -57,3 +57,73 @@ Ahh, but you see, there's a second axis we haven't considered: *check time*
 All of these languages have type guarantees, to an extent. But *where* that checking happens matters. When we check more at compile-time, we give AI an opportunity to agentically correct its code. But at run-time, the AI is just guessing. Unit tests help, sure, but now you're ballooning your unit tests not with logic checks, but with type checks. And we've seen how this ends up: you get high coverage, because you're running code and checking types, but nothing actually *works* because no logic is tested. 
 
 So, there's a fundamental tension: when we make a language less restrictive, we can make it easier to read and write. But if we make a language *too* restrictive, we roll back around: it's hard for humans to read, and hard for humans and AI to write (humans more so).
+
+# The Secret Third Axis - Performance
+
+| Name | Run-time Performance | Compile-time Performance | Examples |
+|-|-|-|-|
+| Highly Static | Very Good | Usually Bad | C#, C++, Rust, Java |
+| Somewhat Static | Good | Good | C, Go |
+| Highly Dynamic | Bad | Good or perfect | Python, PHP, TS, Ruby |
+
+This third axis is arguably the least important. Performance is merely a threshold, not a goal. But, it's still a consideration, especially in complex backend applications where performance directly translates to cost. And, this is just one small part of the performance story. Performance is complicated, and it's a whole-stack concern, from database to frontend. Simply choosing a highly static language like C# isn't enough to get adequate performance.
+
+# Where Does Luna Fit in?
+
+Luna is a statically-typed, compiled language. But, it's not restrictive in the absolute. Luna aims to make augmenting and shaping *data* the main concern of the application. Types and such are just a means to an end. In my opinion, the shape of data and how it flows through the application is the real gem of programming.
+
+Luna aims to be simple, but never obtuse. Often simplicity becomes an excuse for poor ergonomics. Take C, for instance - even implementing a generic `sort` function in C is annoying, with `void *` and all the performance pitfalls that come with it.
+
+The core of Luna is one datastructure - the `table`. Tables can be numerically indexed, or string-key indexed. They're hashmaps, they're iterable, and they describe not just *what* data is, but the shape it should be in. Combined with `match`, we get comprehensive type checking and shape matching. This is in stark contrast to nominally typed languages, where names are king. Here, shape is king.
+
+But that, too, can get annoying. Nobody wants to check the shape and type of things over and over again. Enter `protocols`. Protocols are how we define *what* data might do, what it's intended to be used for. We can enforce, with an iron fist, what must be present in a table, and we can carefully control how it's used. Then, we only need to `apply` protocols wherever they make sense. In contrast to, say, Rust traits, protocols may be applied at runtime, what I call `dynamic application`.
+
+This trait-like system lends us all the garauntees of languages like Rust, without the complexity and mental overhead of inheritence.
+
+# What's More - Obvious Types
+
+I think a lot of languages are scared to add in primitive types as to not bloat the language. But, if we really want stellar ergonomics, we need those primitive types. It can be cumbersome to shoe-horn some functionality behind existing language semantics like inheritence. 
+
+## Capabilities and Secrets
+
+One concept I really wanted to lean into is `capabilities`. Capabilites describe *what* functions can do, but never how. They're simple, data-less tags that we can `use`. We define them like `const revealEnvVars = capability;` Then, we can have some arbtrary function that looks like `const readEnvVars = fn () use (revealEnvVars) {};`.
+
+What makes capabilities unique and powerful is that they're not simple captures. No, the capabilities of a function are assessed at call-time. Capabilities are truly general purpose, and we can use them to express permissions that are difficult or impossible to express in other languages. Want a function which can read DB credentials but not execute queries? Sure! Want a function that can't `use (io)`? Sure! Want a function that can read stacktraces? Why not!
+
+This ties in nicely with another primitive Luna provides - `secret`s. Secrets just wrap arbirary data and intercept printing. They keep secrets, well, secret. And we can tie a specific type of secret to a specific capability, so only some functions can read them. This gives us a lot of functionality for free - we can create `command` pipelines, but keep the arguments hidden, which is especially important if they're environment variables. We can execute queries, but keep DB credentials out of logs.
+
+But where capabilities really shine is `comptime`. Luna has `comptime`, the idea that you can run an arbitrary function at compile-time. But it's gated by capabilities. We have all the structural tools to ensure that a `comptime` function cannot access IO, or make HTTP requests, or do FFI. There's no sandbox per se, because we don't need it. The language itself has the tools to make leakage structurally impossible. We can't `use (IO)` in a comptime function because we say so - that capability is restricted to runtime. What that allows us is the inversion of comptime declaration. We don't need to declare functions comptime, although we can. Instead, we can do `const myTable = comptime constructTable();` Because of capabilities, we can determine at compile-time whether `constructTable()` is comptime eligible. 
+
+## Other Built-ins
+
+But wait, there's more! `regex`? Sure, that's a built-in type, and we get ergonomic syntax with `//`. `command`? Sure, why not? And with capabilities, we can even separate the act of constructing shell commands from actually executing them. Construct a shell command at compile-time? Sure, but you can't execute it there! `string`? Yes, and it's utf8. `bytes`? Absolutely! 
+
+# A Flexible Type System
+
+Luna, like PHP, favors complex types over generics. It's so much nicer to write `const sum = fn (int|double num1, int|double num2);` than do the generic song and dance. And, of course, we can just declare new types: `const numeric = int|double|decimal;` But whoa - doesn't this get crazy complex?
+
+Actually no, because in Luna, the type universe is *closed*. We can never introduce new types at runtime, they're all predetermined at compile-time. And Luna is statically typed, so we're just one little hover in the IDE away from understanding what types some function operates on. 
+
+But what if we WANT type-erasure? Well, we can! `any` binds to, well, any type. `fn` without a signature binds to any non-errorable function. And `fn!` binds to any function, period. We then assess at runtime if it works, requiring manual type narrowing with `as`. We never coerce either, coercion is always explicit, even for truthiness, which Luna doesn't have. 
+
+And, speaking of errors...
+
+# Errors: My Magnum Opus
+
+There are two schools of thought about error handling in programming languages: exception semantics, and errors-as-values. Both suck for different reasons.
+
+Exceptions hide complex control flow and can make programs harder to reason about. But errors-as-values force us to write the same tired manual unwinding semantics time and time again. It gets error-prone (ha), and people just stop trying altogether.
+
+So with Luna, I thought, *why not both*?
+
+<LunaCode name="errorable-fn" />
+
+What a strange signature, no? What is that `int!` doing there, what does that mean? Well, it means *someFn can throw*.
+
+Now, we, the programmer, get to *choose* how to handle that. If we're super deep in a call stack and in no position to handle it, then we just let it throw and follow standard exception semantics. But, if we want to handle it right then and there, we can.
+
+<LunaCode name="handling-errors" />
+
+The reason this works is two-fold: errors are checked, and errors are type-erased. Fully checked errors or exceptions are just too annoying to use in practice. What ends up happening is people abuse sentinel values like `[]` or `''` or `-1` to represent errors. And that sucks, right? Because now we need to read the function documentation, or worse, *body*, to determine what's ACTUALLY an error. And all ergonomics are lost. No message, no stacktrace.
+
+So, we require that a function declares it can throw. And then, we employ - gasp - *inheritence*. Why? Errors naturally fall into a simple tree-like structure, where errors are subtypes of other errors. Maybe `parseError <: runtimeError`, and maybe `intOverflow <: panic`. And, on the topic of panics, we don't need to declare them. Really just about any function can panic with something like `outOfMemory`, so declaring all potential panic points is just wasted noise.
