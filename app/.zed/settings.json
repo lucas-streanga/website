@@ -1,0 +1,27 @@
+{
+  // Treat .mdx blog posts as Markdown so the Harper grammar/spell
+  // checker (which binds to Markdown, not MDX) attaches to them.
+  "file_types": {
+    "Markdown": ["mdx"]
+  },
+  "languages": {
+    "Markdown": {
+      // Harper is the checker; keep it on for Markdown/MDX.
+      "language_servers": ["harper-ls"]
+    }
+  },
+  "lsp": {
+    "harper-ls": {
+      "settings": {
+        // Both nested "harper-ls" layers are required by the extension.
+        "harper-ls": {
+          "dialect": "American",
+          // Project-local word list. Use the "Add to dictionary" code
+          // action on a flagged word (e.g. Luna, LunaCode, argv) to
+          // append here instead of polluting your global dictionary.
+          "workspaceDictPath": ".harper-dictionary.txt"
+        }
+      }
+    }
+  }
+}

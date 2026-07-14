@@ -1,5 +1,7 @@
 import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
+import { unified } from "@astrojs/markdown-remark";
+import remarkLunaFences from "./src/lib/remark-luna-fences.mjs";
 
 // Wrap every GFM table in <div class="table-wrap"> so wide tables can scroll on
 // narrow screens and take the same card frame as code blocks (see PostLayout).
@@ -26,8 +28,17 @@ function rehypeWrapTables() {
 
 export default defineConfig({
   // Applies to .md and .mdx (MDX inherits markdown config by default).
+  // Astro 7's default processor is Sätteri; our remark/rehype plugins run on the
+  // legacy `unified` processor, so we select it explicitly. (The deprecated
+  // markdown.remarkPlugins/rehypePlugins fields forced this same processor
+  // implicitly — this is behavior-preserving, just without the deprecation warning.)
   markdown: {
-    rehypePlugins: [rehypeWrapTables],
+    processor: unified({
+      // Rewrite ```luna fences into <LunaCode> before Shiki runs (see the plugin).
+      // The slug page must pass components={{ LunaCode }} to <Content /> for it.
+      remarkPlugins: [remarkLunaFences],
+      rehypePlugins: [rehypeWrapTables],
+    }),
   },
 
   // Required for absolute URLs in canonical/Open Graph tags (and sitemaps).

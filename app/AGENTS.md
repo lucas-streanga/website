@@ -35,8 +35,9 @@ app/
 │   │   ├── Link.astro, BlurImage.astro   # BlurImage = optimized image w/ blur-up via sharp
 │   │   └── LunaCode.astro                # Renders Luna source with Shiki highlighting
 │   ├── lib/                 # Non-component TypeScript helpers
-│   │   ├── inlineMarkdown.ts  # Minimal inline-Markdown renderer for short strings (e.g. captions)
-│   │   └── shiki-luna.ts      # Luna grammar registration for Shiki code highlighting
+│   │   ├── inlineMarkdown.ts       # Minimal inline-Markdown renderer for short strings (e.g. captions)
+│   │   ├── remark-luna-fences.mjs  # Rewrites ```luna fences → <LunaCode> (see "Luna code in a post")
+│   │   └── shiki-luna.ts           # Luna grammar registration for Shiki code highlighting
 │   ├── styles/global.css    # Design tokens (colors/spacing) + global styles; theming lives here
 │   └── assets/              # Images and code snippets imported by pages/components
 └── public/                 # Static files served as-is at the site root
@@ -45,6 +46,7 @@ app/
 Where to make common changes:
 
 - **New blog post** → add a `.md`/`.mdx` file under `src/content/blog/` matching the schema in `content.config.ts`; it's auto-routed via `[...slug].astro`.
+- **Luna code in a post** → fence it as ` ```luna ` (optionally ` ```luna title="foo.luna" ` for a caption). The `remark-luna-fences.mjs` plugin rewrites the fence to `<LunaCode>`, so you get the framed, syntax-highlighted card (caption + copy button) with **no per-post `import`** — `[...slug].astro` supplies the component via `<Content components={{ LunaCode }} />`. Reusable snippets can instead live at `src/assets/snippets/<name>.luna` and be embedded with `<LunaCode name="<name>" />`. Caveats: fences work in **`.mdx` only** (the rewrite emits an MDX component — a ` ```luna ` block in a `.md` file won't compile), and the plugin is registered on the explicit `unified()` processor in `astro.config.mjs` — Astro 7's default Sätteri processor won't run remark/rehype plugins, so keep `markdown.processor: unified({...})` (not the deprecated `markdown.remarkPlugins`/`rehypePlugins` fields) when adding more.
 - **New frontmatter field** → edit the `blog` schema in `src/content.config.ts` (type-checked everywhere).
 - **New page/route** → add a file under `src/pages/`.
 - **Styling / theme tokens** → `src/styles/global.css`.

@@ -3,6 +3,9 @@
 // auto-routed, so this file is what turns each post into /blog/<id>.
 import { getCollection, render } from "astro:content";
 import PostLayout from "../../layouts/PostLayout.astro";
+// Provided to <Content> so ```luna fences (rewritten to <LunaCode> by the
+// remark-luna-fences plugin) resolve without a per-post import.
+import LunaCode from "../../components/LunaCode.astro";
 
 export async function getStaticPaths() {
     const posts = await getCollection("blog");
@@ -17,5 +20,5 @@ const { Content } = await render(post);
 ---
 
 <PostLayout post={post}>
-    <Content />
+    <Content components={{ LunaCode }} />
 </PostLayout>
