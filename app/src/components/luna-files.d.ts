@@ -1,29 +1,16 @@
 /**
- * Type declarations for importing .luna source files as strings.
+ * Type declarations for importing .luna source files as strings via `?raw`.
  *
- * Vite (under Astro) already supports the `?raw` suffix at runtime for any file;
- * this file is only what makes TypeScript agree. Make sure it is picked up:
- * either place it under `src/` beside `env.d.ts`, or add `"tooling/*.d.ts"` to
- * your tsconfig `include`.
+ * Vite (under Astro) already supports `?raw` at runtime; this file only makes
+ * TypeScript agree. Must be on the tsconfig include path — place under `src/`
+ * beside `env.d.ts`, or add `"tooling/*.d.ts"` to `include`.
  *
- * Usage in a page or .mdx frontmatter:
- *
- *   import LunaCode from '../tooling/LunaCode.astro';
+ * Usage:
  *   import hello from '../snippets/hello.luna?raw';
- *
  *   <LunaCode title="hello.luna" code={hello} />
  *
- * Bulk-loading a directory (an examples index page):
- *
- *   const snippets = import.meta.glob('../snippets/*.luna', {
- *     query: '?raw',
- *     import: 'default',
- *     eager: true,
- *   }) as Record<string, string>;
- *
- *   {Object.entries(snippets).map(([file, code]) => (
- *     <LunaCode title={file.split('/').pop()} code={code} />
- *   ))}
+ * Bulk-load a directory with import.meta.glob(..., { query: '?raw',
+ * import: 'default', eager: true }) as Record<string, string>.
  */
 
 declare module '*.luna?raw' {
@@ -31,6 +18,6 @@ declare module '*.luna?raw' {
   export default source;
 }
 
-// Deliberately no bare `*.luna` declaration: importing a .luna file WITHOUT `?raw`
-// has no defined meaning until a compiler-backed loader exists, and leaving it
-// untyped keeps that mistake loud instead of silently `any`.
+// Deliberately no bare `*.luna` declaration: importing without `?raw` has no
+// defined meaning until a compiler-backed loader exists; leaving it untyped keeps
+// that mistake loud instead of silently `any`.

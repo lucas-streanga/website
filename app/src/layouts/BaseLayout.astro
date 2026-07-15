@@ -15,9 +15,9 @@ const {
     image = "/og-default.png",
     type = "website",
 } = Astro.props;
-// Absolute URLs for canonical + social tags. Requires `site` in astro.config.mjs.
-// new URL(relativeOrAbsolute, base): a relative path resolves against the site,
-// an already-absolute URL is returned unchanged — so per-post overrides can be either.
+// Absolute URLs for canonical + social tags (requires `site` in astro.config.mjs).
+// new URL(x, base): relative paths resolve against the site, absolute URLs pass
+// through unchanged — so per-post overrides can be either.
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(image, Astro.site);
 const SITE_NAME = "streanga.com";
@@ -30,13 +30,12 @@ const SITE_NAME = "streanga.com";
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Font cssVariable="--font-inter" preload />
         <Font cssVariable="--font-fraunces" preload />
-        <!-- THEME SCRIPT (inline so it runs before first paint — no flash).
-         Only an EXPLICIT choice is written; otherwise data-theme and the inline
-         color-scheme are cleared so CSS `color-scheme: light dark` follows the
-         OS. color-scheme is pinned inline so the correct scheme applies before
-         the external stylesheet loads. On view transitions we theme the INCOMING
-         document in astro:before-swap, before it paints, so navigation never
-         flashes the OS theme. -->
+        <!-- Inline so it runs before first paint (no flash). Only an EXPLICIT
+         choice is written; otherwise data-theme + inline color-scheme are cleared
+         so CSS `color-scheme: light dark` follows the OS. color-scheme is pinned
+         inline so the right scheme applies before the external stylesheet loads.
+         On view transitions we theme the INCOMING document in astro:before-swap
+         (before it paints) so navigation never flashes the OS theme. -->
         <script is:inline>
             (function () {
                 function choice() {
@@ -63,14 +62,11 @@ const SITE_NAME = "streanga.com";
                 });
             })();
         </script>
-        <!-- Primary meta -->
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
-        <!-- Favicons. The SVG covers modern browsers; add the PNG/ICO files to
-         /public if you want broader coverage (see notes). -->
-        <!-- ?v=2 busts browsers' aggressive favicon cache after the icon was
-             regenerated; bump it whenever the icon art changes. -->
+        <!-- Favicons: the SVG covers modern browsers; add PNG/ICO to /public for broader coverage. -->
+        <!-- ?v=2 busts browsers' aggressive favicon cache; bump it whenever the icon art changes. -->
         <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico?v=2" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

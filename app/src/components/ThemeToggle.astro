@@ -61,7 +61,6 @@
         block-size: 1.15rem;
     }
 
-    /* Show the moon in light mode, the sun in dark mode. */
     .icon-sun {
         display: none;
     }
@@ -78,8 +77,8 @@
     const toggle = document.getElementById("theme-toggle");
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
 
-    // The theme the user is actually seeing: an explicit choice if one is
-    // set, otherwise whatever the OS prefers (the unset/CSS-driven state).
+    // The theme actually shown: an explicit choice if set, else the OS
+    // preference (the unset/CSS-driven state).
     function effectiveTheme() {
         if (root.dataset.theme === "dark" || root.dataset.theme === "light") {
             return root.dataset.theme;
@@ -97,9 +96,9 @@
         toggle?.setAttribute("aria-pressed", String(dark));
     }
 
-    // Pin an explicit choice (only ever called from a real click). Sets the
-    // inline color-scheme too, matching the head script — otherwise a stale
-    // inline value would override the CSS on the next toggle.
+    // Pin an explicit choice (only from a real click). Also sets inline
+    // color-scheme to match the head script — otherwise a stale inline value
+    // would override the CSS on the next toggle.
     function setTheme(theme: string) {
         root.dataset.theme = theme;
         root.style.colorScheme = theme;
@@ -113,8 +112,8 @@
         setTheme(effectiveTheme() === "dark" ? "light" : "dark");
     });
 
-    // If the visitor never toggled, follow live OS changes and keep the
-    // button label honest. Once they've chosen, their choice stands.
+    // If the visitor never toggled, follow live OS changes and keep the label
+    // honest; once they've chosen, their choice stands.
     mql.addEventListener("change", () => {
         if (!root.dataset.theme) syncButton(effectiveTheme());
     });

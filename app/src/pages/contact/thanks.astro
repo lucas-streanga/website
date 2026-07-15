@@ -1,0 +1,47 @@
+---
+// No-JS success landing: the /api/contact function 303-redirects here after a native post.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+    title="Message sent — streanga.com"
+    description="Your message has been sent."
+>
+    <main id="main">
+        <section class="thanks">
+            <div class="container">
+                <p class="eyebrow">Contact</p>
+                <h1>Message sent</h1>
+                <p class="lead">
+                    Thanks for reaching out — your message is on its way to my
+                    inbox. I read every one and will reply to the email you gave
+                    me.
+                </p>
+                <a href="/" class="btn btn-primary">Back to home</a>
+            </div>
+        </section>
+    </main>
+</BaseLayout>
+
+<style>
+    .thanks {
+        padding-block: clamp(var(--space-16), 8vw, var(--space-24));
+    }
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--color-accent);
+        margin-block-end: var(--space-4);
+    }
+    h1 {
+        font-size: var(--text-4xl);
+    }
+    .lead {
+        margin-block: var(--space-6) var(--space-8);
+        max-inline-size: 46ch;
+        font-size: var(--text-lg);
+        color: var(--color-text-muted);
+    }
+</style>

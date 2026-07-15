@@ -2,10 +2,10 @@
 /**
  * sync-luna-grammar.mjs — lives in the astro repo at scripts/.
  *
- * Syncs src/lib/shiki-luna.ts from the luna repo so this site never maintains
- * its own fork of the grammar. Pure Node (built-in fetch, Node >= 18): no git,
- * no curl — both are absent from node:22-slim, so this runs identically inside
- * the container, on a Linux host, and on Apple-silicon podman.
+ * Syncs src/lib/shiki-luna.ts from the luna repo so this site never forks the
+ * grammar. Pure Node (built-in fetch, Node >= 18) — no git, no curl, since both
+ * are absent from node:22-slim; runs identically in the container, on Linux, and
+ * on Apple-silicon podman.
  *
  * Wire via package.json:
  *
@@ -15,11 +15,10 @@
  *   }
  *
  * Offline-safe: keeps the existing copy (with a warning) when GitHub is
- * unreachable; fails only if no copy exists at all. Every fetch carries a
- * 10s timeout so a dead network can never hang `npm run dev` (whose hang is a
- * hung container, given the image's CMD). Recommend COMMITTING the synced
- * file: fresh clones and offline CI always build, and upstream grammar
- * changes surface as reviewable diffs.
+ * unreachable, failing only if no copy exists. Every fetch carries a 10s timeout
+ * so a dead network can't hang `npm run dev` (a hang here is a hung container,
+ * given the image's CMD). COMMIT the synced file: fresh clones and offline CI
+ * still build, and upstream changes surface as reviewable diffs.
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -47,8 +46,7 @@ async function get(url, accept) {
 try {
     const body = await get(RAW_URL);
 
-    // Best-effort rev for the stamp; rate limits or API failures must not
-    // block the sync itself.
+    // Best-effort rev for the stamp; rate limits / API failures must not block the sync.
     let rev = "unknown";
     try {
         rev = (await get(SHA_URL, "application/vnd.github.sha"))

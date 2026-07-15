@@ -2,6 +2,7 @@
 // Colors/spacing all come from the tokens in styles/global.css.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BlurImage from "../components/BlurImage.astro";
+import ContactForm from "../components/ContactForm.astro";
 import me from "../assets/me.jpg";
 ---
 
@@ -19,7 +20,8 @@ import me from "../assets/me.jpg";
                     <div class="actions">
                         <a href="/blog" class="btn btn-primary">Read the blog</a
                         >
-                        <a href="#about" class="btn btn-ghost">About me</a>
+                        <a href="#contact" class="btn btn-ghost">Get in touch</a
+                        >
                     </div>
                 </div>
 
@@ -35,12 +37,39 @@ import me from "../assets/me.jpg";
                 </div>
             </div>
         </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <ContactForm />
+            </div>
+        </section>
     </main>
 </BaseLayout>
 
 <style>
     .hero {
         padding-block: clamp(var(--space-16), 8vw, var(--space-24));
+    }
+    .contact {
+        position: relative;
+        padding-block: clamp(var(--space-12), 6vw, var(--space-16))
+            clamp(var(--space-16), 8vw, var(--space-24));
+    }
+    /* Fading hairline as a soft seam above the section, instead of a hard rule. */
+    .contact::before {
+        content: "";
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline: 0;
+        margin-inline: auto;
+        inline-size: min(100% - 2 * var(--space-6), var(--container));
+        block-size: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            var(--color-border),
+            transparent
+        );
     }
     .hero-grid {
         display: grid;

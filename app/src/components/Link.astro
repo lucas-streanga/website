@@ -7,8 +7,8 @@ interface Props {
 
 const { href, newTab, class: className, ...rest } = Astro.props;
 
-// Only absolute http(s) URLs are candidates for "external". If a site origin is
-// configured, links to that same origin are treated as internal.
+// Only absolute http(s) URLs can be "external"; if a site origin is configured,
+// same-origin links are treated as internal.
 let isExternal = false;
 if (/^https?:\/\//i.test(href)) {
     try {
