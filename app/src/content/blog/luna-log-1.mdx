@@ -75,6 +75,8 @@ This third axis is arguably the least important. Performance is merely a thresho
 
 Luna is a statically-typed, compiled language. But, it's not restrictive in the absolute. Luna aims to make augmenting and shaping _data_ the main concern of the application. Types and such are just a means to an end. In my opinion, the shape of data and how it flows through the application is the real gem of programming.
 
+That's the heart of it, but not the whole story. A few more ideas give Luna its shape: `protocols`, a flexible type system, and the one I'm most eager to show off, `capabilities`. We'll build up to each.
+
 Luna aims to be simple, but never obtuse. Often simplicity becomes an excuse for poor ergonomics. Take C, for instance - even implementing a generic `sort` function in C is annoying, with `void *` and all the performance pitfalls that come with it.
 
 The core of Luna is one data structure - the `table`. Tables can be numerically indexed, or string-key indexed. They're hashmaps, they're iterable, and they describe not just _what_ data is, but the shape it should be in. Combined with `match`, we get comprehensive type checking and shape matching. This is in stark contrast to nominally typed languages, where names are king. Here, shape is king.
@@ -83,21 +85,19 @@ But that, too, can get annoying. Nobody wants to check the shape and type of thi
 
 This trait-like system lends us all the guarantees of languages like Rust, without the complexity and mental overhead of inheritance.
 
-## What's More - Obvious Types
-
-I think a lot of languages are scared to add in primitive types as to not bloat the language. But, if we really want stellar ergonomics, we need those primitive types. It can be cumbersome to shoehorn some functionality behind existing language semantics like inheritance.
-
-### Capabilities and Secrets
+## Capabilities and Secrets
 
 One concept I really wanted to lean into is `capabilities`. Capabilities describe _what_ functions can do, but never how. They're simple, data-less tags that we can `use`. We define them like `const revealEnvVars = capability;`. Then, we can have some arbitrary function that looks like `const readEnvVars = fn () use (revealEnvVars) {};`.
 
-What makes capabilities unique and powerful is that they're not simple captures. No, the capabilities of a function are assessed at call-time. Capabilities are truly general purpose, and we can use them to express permissions that are difficult or impossible to express in other languages. Want a function which can read DB credentials but not execute queries? Sure! Want a function that can't `use (io)`? Sure! Want a function that can read stacktraces? Why not!
+What makes capabilities unique and powerful is that they're not simple captures. No, the capabilities of a function are assessed at call-time. A capability isn't baggage a closure records when it's created and hauls around; it's checked against the call itself. So you can pass a function wherever you like and never smuggle a capability along with it - the check happens where the function is called, not where it was born. That's exactly why they're hard to bolt onto other languages, and why they're so expressive: we can grant permissions that are difficult or impossible to pin down elsewhere. Want a function which can read DB credentials but not execute queries? Sure! Want a function that can't `use (io)`? Sure! Want a function that can read stacktraces? Why not!
 
 This ties in nicely with another primitive Luna provides - `secret`s. Secrets just wrap arbitrary data and intercept printing. They keep secrets, well, secret. And we can tie a specific type of secret to a specific capability, so only some functions can read them. This gives us a lot of functionality for free - we can create `command` pipelines, but keep the arguments hidden, which is especially important if they're environment variables. We can execute queries, but keep DB credentials out of logs.
 
 But where capabilities really shine is `comptime`. Luna has `comptime`, the idea that you can run an arbitrary function at compile-time. But it's gated by capabilities. We have all the structural tools to ensure that a `comptime` function cannot access IO, or make HTTP requests, or do FFI. There's no sandbox per se, because we don't need it. The language itself has the tools to make leakage structurally impossible. We can't `use (io)` in a comptime function because we say so - that capability is restricted to runtime. This inverts how `comptime` usually works. We don't need to declare functions comptime, although we can. Instead, we just call them that way: `const myTable = comptime constructTable();`. Because capabilities already tell the compiler what `constructTable()` can do, it can determine on its own whether the call is comptime-eligible.
 
-### Other Built-ins
+## Built-in Types
+
+Luna also isn't shy about primitive types. If something is common enough to earn ergonomic, first-class support, it gets it, rather than being shoehorned in behind existing semantics.
 
 But wait, there's more! `regex`? Sure, that's a built-in type, and we get ergonomic syntax with `//`. `command`? Sure, why not? And with capabilities, we can even separate the act of constructing shell commands from actually executing them. Construct a shell command at compile-time? Sure, but you can't execute it there! `string`? Yes, and it's UTF-8. `bytes`? Absolutely!
 
@@ -149,7 +149,7 @@ let message = match (@result) {
 };
 ```
 
-The reason this works is two-fold: errors are checked, and errors are type-erased. Fully checked errors or exceptions are just too annoying to use in practice. What ends up happening is people abuse sentinel values like `[]` or `''` or `-1` to represent errors. And that sucks, right? Because now we need to read the function documentation, or worse, _body_, to determine what's ACTUALLY an error. And all ergonomics are lost. No message, no stacktrace.
+The reason this works is two-fold: errors are checked, and errors are type-erased. Fully checked errors or exceptions are just too annoying to use in practice. What ends up happening is people abuse sentinel values like `[]` or `''` or `-1` to represent errors. And that sucks, right? Because now we need to read the function documentation, or worse, _body_, to determine what's ACTUALLY an error. And all ergonomics are lost. No message, no stacktrace. Luna's errors keep both - and here's where capabilities sneak back in: actually _reading_ that stacktrace is itself a capability. An error can propagate up the whole call stack, but only the frames you've blessed can crack it open and read the trace. Which is handy, since a stacktrace can leak plenty it shouldn't.
 
 So, we require that a function declares it can throw. And then, we employ - gasp - _inheritance_. Why? Because where data is all about _shape_, errors are all about _kind_, and a hierarchy captures 'kind-of' relationships perfectly. Errors naturally fall into a simple tree-like structure, where errors are subtypes of other errors. Maybe `parseError <: runtimeError`, and maybe `intOverflow <: panic`. And, on the topic of panics, we don't need to declare them. Really just about any function can panic with something like `outOfMemory`, so declaring all potential panic points is just wasted noise.
 
