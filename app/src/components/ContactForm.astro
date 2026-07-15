@@ -52,9 +52,13 @@ const MAX_MESSAGE = 1024;
             </div>
 
             <div class="field">
-                <label for="cf-message"
-                    >Message <span class="req" aria-hidden="true">*</span></label
-                >
+                <div class="field-head">
+                    <label for="cf-message"
+                        >Message <span class="req" aria-hidden="true">*</span
+                        ></label
+                    >
+                    <span class="counter" data-counter aria-hidden="true"></span>
+                </div>
                 <textarea
                     id="cf-message"
                     name="message"
@@ -62,8 +66,6 @@ const MAX_MESSAGE = 1024;
                     rows="5"
                     maxlength={MAX_MESSAGE}
                     placeholder="What's on your mind?"></textarea>
-                <span class="counter" data-counter aria-hidden="true" hidden
-                ></span>
             </div>
 
             {/* Honeypot: hidden from humans + AT but still submitted; the server drops it if non-empty. */}
@@ -188,8 +190,15 @@ const MAX_MESSAGE = 1024;
         min-block-size: 7rem;
     }
 
+    .field-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--space-4);
+    }
+    /* On the label row (empty until JS fills it) so appearing adds no height —
+       otherwise it shoves the Send button down on load (a layout shift). */
     .counter {
-        justify-self: end;
         font-size: var(--text-sm);
         color: var(--color-text-muted);
     }
@@ -263,7 +272,6 @@ const MAX_MESSAGE = 1024;
                 counter.textContent = `${len} / ${MAX_MESSAGE}`;
                 counter.dataset.near = String(len >= MAX_MESSAGE * 0.9);
             };
-            counter.hidden = false;
             update();
             message.addEventListener("input", update);
         }

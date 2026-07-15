@@ -65,6 +65,10 @@ export default defineConfig({
       name: "Inter",
       cssVariable: "--font-inter",
       weights: ["100 900"], // variable range
+      // optional (not swap): with the font preloaded it renders from first paint,
+      // and otherwise sticks with the fallback for that load rather than swapping
+      // mid-page — so no font-driven reflow (e.g. the email link).
+      display: "optional",
     },
     {
       provider: fontProviders.fontsource(),
@@ -72,6 +76,7 @@ export default defineConfig({
       cssVariable: "--font-literata",
       weights: ["200 900"],
       styles: ["normal", "italic"],
+      display: "optional",
     },
   ],
 });
