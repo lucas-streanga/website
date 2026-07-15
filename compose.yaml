@@ -2,6 +2,7 @@ x-node-env: &node-env
   UV_USE_IO_URING: "0"
 services:
   astro:
+    user: "node"
     environment: *node-env
     userns_mode: "keep-id"
     security_opt: ["seccomp=unconfined"]

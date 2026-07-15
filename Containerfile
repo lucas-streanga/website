@@ -38,6 +38,7 @@
   RUN npm install
 
   COPY app/ ./
+  RUN chown -R node:node /website/app/node_modules
 
   EXPOSE 4321
   CMD ["sh", "-c", "rm -f .astro/dev.json && exec node_modules/.bin/astro dev --host 0.0.0.0"]
