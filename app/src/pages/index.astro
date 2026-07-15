@@ -51,9 +51,27 @@ import me from "../assets/me.jpg";
         padding-block: clamp(var(--space-16), 8vw, var(--space-24));
     }
     .contact {
+        position: relative;
         padding-block: clamp(var(--space-12), 6vw, var(--space-16))
             clamp(var(--space-16), 8vw, var(--space-24));
-        border-block-start: 1px solid var(--color-border);
+    }
+    /* A hairline that fades to transparent at both ends — a soft seam above the
+       contact section instead of a hard full-bleed rule. Width tracks the
+       container so the solid middle sits under the content, ends dissolve. */
+    .contact::before {
+        content: "";
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline: 0;
+        margin-inline: auto;
+        inline-size: min(100% - 2 * var(--space-6), var(--container));
+        block-size: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            var(--color-border),
+            transparent
+        );
     }
     .hero-grid {
         display: grid;
