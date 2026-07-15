@@ -2,6 +2,7 @@
 // Colors/spacing all come from the tokens in styles/global.css.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BlurImage from "../components/BlurImage.astro";
+import ContactForm from "../components/ContactForm.astro";
 import me from "../assets/me.jpg";
 ---
 
@@ -19,7 +20,8 @@ import me from "../assets/me.jpg";
                     <div class="actions">
                         <a href="/blog" class="btn btn-primary">Read the blog</a
                         >
-                        <a href="#about" class="btn btn-ghost">About me</a>
+                        <a href="#contact" class="btn btn-ghost">Get in touch</a
+                        >
                     </div>
                 </div>
 
@@ -35,12 +37,23 @@ import me from "../assets/me.jpg";
                 </div>
             </div>
         </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <ContactForm />
+            </div>
+        </section>
     </main>
 </BaseLayout>
 
 <style>
     .hero {
         padding-block: clamp(var(--space-16), 8vw, var(--space-24));
+    }
+    .contact {
+        padding-block: clamp(var(--space-12), 6vw, var(--space-16))
+            clamp(var(--space-16), 8vw, var(--space-24));
+        border-block-start: 1px solid var(--color-border);
     }
     .hero-grid {
         display: grid;

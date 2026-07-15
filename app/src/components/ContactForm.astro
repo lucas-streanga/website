@@ -1,0 +1,303 @@
+---
+// Contact form for the home page. Posts to the /api/contact Pages Function
+// (see app/functions/api/contact.js), which emails the message to
+// contactform@streanga.com via Resend.
+//
+// Progressive enhancement:
+//   - No JS: a native <form method="POST"> submit hits the function, which
+//     303-redirects to /contact/thanks. The site stays fully usable without JS.
+//   - JS: the submit is intercepted, sent via fetch(), and an inline "thanks"
+//     panel replaces the form — no navigation.
+//
+// All colors/spacing come from the tokens in styles/global.css, so it themes
+// (light/dark) automatically.
+const MAX_MESSAGE = 1024;
+---
+
+<div class="contact-card">
+    <p class="eyebrow">Contact</p>
+    <h2 class="contact-title">Get in touch</h2>
+    <p class="contact-lead">
+        Have a question, an idea, or just want to say hello? Send a message and
+        it lands straight in my inbox.
+    </p>
+
+    <form id="contact-form" class="form" method="POST" action="/api/contact">
+        <div class="field">
+            <label for="cf-email"
+                >Email <span class="req" aria-hidden="true">*</span></label
+            >
+            <input
+                type="email"
+                id="cf-email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder="you@example.com"
+            />
+        </div>
+
+        <div class="field">
+            <label for="cf-name"
+                >Name <span class="optional">(optional)</span></label
+            >
+            <input
+                type="text"
+                id="cf-name"
+                name="name"
+                maxlength="256"
+                autocomplete="name"
+                placeholder="Ada Lovelace"
+            />
+        </div>
+
+        <div class="field">
+            <label for="cf-message"
+                >Message <span class="req" aria-hidden="true">*</span></label
+            >
+            <textarea
+                id="cf-message"
+                name="message"
+                required
+                rows="5"
+                maxlength={MAX_MESSAGE}
+                placeholder="What's on your mind?"></textarea>
+            <span class="counter" data-counter aria-hidden="true" hidden></span>
+        </div>
+
+        {/* Honeypot: off-screen + hidden from assistive tech, but still in the
+            DOM and submitted. A real person never fills it; the server silently
+            drops any submission where it's non-empty. */}
+        <div class="hp" aria-hidden="true">
+            <label for="cf-website">Website</label>
+            <input
+                type="text"
+                id="cf-website"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+            />
+        </div>
+
+        <button type="submit" class="btn btn-primary" data-submit
+            >Send message</button
+        >
+
+        <p class="form-status" data-status role="status" aria-live="polite"></p>
+    </form>
+
+    {/* Shown (via JS) after a successful fetch submit, in place of the form. */}
+    <div class="form-success" data-success role="status" aria-live="polite" hidden>
+        <h3>Thanks — your message is on its way.</h3>
+        <p>I read every message and will reply to the email you gave me.</p>
+    </div>
+</div>
+
+<style>
+    .contact-card {
+        max-inline-size: 40rem;
+        margin-inline: auto;
+        padding: clamp(var(--space-6), 4vw, var(--space-12));
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+    }
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--color-accent);
+        margin-block-end: var(--space-4);
+    }
+    .contact-title {
+        font-size: var(--text-2xl);
+    }
+    .contact-lead {
+        margin-block-start: var(--space-4);
+        max-inline-size: 46ch;
+        color: var(--color-text-muted);
+    }
+
+    .form {
+        margin-block-start: var(--space-8);
+        display: grid;
+        gap: var(--space-6);
+    }
+    .field {
+        display: grid;
+        gap: var(--space-2);
+    }
+    label {
+        font-size: var(--text-sm);
+        font-weight: 600;
+    }
+    .optional {
+        font-weight: 400;
+        color: var(--color-text-muted);
+    }
+    .req {
+        color: var(--color-accent);
+    }
+
+    input,
+    textarea {
+        inline-size: 100%;
+        padding: var(--space-3) var(--space-4);
+        color: var(--color-text);
+        background-color: var(--color-surface-sunken);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        transition: border-color 0.15s ease;
+    }
+    input::placeholder,
+    textarea::placeholder {
+        color: var(--color-text-muted);
+        opacity: 0.7;
+    }
+    /* Accent the border on focus; the global :focus-visible rule (global.css)
+       still supplies the keyboard focus ring on top. */
+    input:focus,
+    textarea:focus {
+        border-color: var(--color-accent);
+    }
+    textarea {
+        resize: vertical;
+        min-block-size: 7rem;
+    }
+
+    .counter {
+        justify-self: end;
+        font-size: var(--text-sm);
+        color: var(--color-text-muted);
+    }
+    .counter[data-near="true"] {
+        color: var(--color-accent);
+    }
+
+    button[data-submit] {
+        justify-self: start;
+    }
+
+    .form-status {
+        margin: 0;
+        font-size: var(--text-sm);
+    }
+    .form-status:empty {
+        display: none;
+    }
+    .form-status[data-state="error"] {
+        color: var(--color-accent-strong);
+    }
+
+    .form-success h3 {
+        font-size: var(--text-lg);
+    }
+    .form-success p {
+        margin-block-start: var(--space-3);
+        color: var(--color-text-muted);
+    }
+
+    /* Honeypot. Pushed off-screen rather than display:none — some bots skip
+       display:none/hidden fields, but happily fill a positioned one. */
+    .hp {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+</style>
+
+<script>
+    const MAX_MESSAGE = 1024;
+
+    function initContactForm() {
+        const form = document.getElementById(
+            "contact-form",
+        ) as HTMLFormElement | null;
+        // Only present on the home page; also guard against double-init across
+        // view transitions (astro:page-load can fire for the same DOM).
+        if (!form || form.dataset.enhanced === "true") return;
+        form.dataset.enhanced = "true";
+
+        const message =
+            form.querySelector<HTMLTextAreaElement>("[name='message']");
+        const counter = form.querySelector<HTMLElement>("[data-counter]");
+        const submit = form.querySelector<HTMLButtonElement>("[data-submit]");
+        const status = form.querySelector<HTMLElement>("[data-status]");
+        const success =
+            form.parentElement?.querySelector<HTMLElement>("[data-success]");
+
+        // Character counter — JS only. Without JS it stays hidden and the
+        // maxlength attribute still caps the field.
+        if (message && counter) {
+            const update = () => {
+                const len = message.value.length;
+                counter.textContent = `${len} / ${MAX_MESSAGE}`;
+                counter.dataset.near = String(len >= MAX_MESSAGE * 0.9);
+            };
+            counter.hidden = false;
+            update();
+            message.addEventListener("input", update);
+        }
+
+        const setStatus = (text: string, state?: "error") => {
+            if (!status) return;
+            status.textContent = text;
+            if (state) status.dataset.state = state;
+            else delete status.dataset.state;
+        };
+
+        form.addEventListener("submit", async (event) => {
+            // The submit event only fires once native HTML validation passes,
+            // so required/email/maxlength are already satisfied here.
+            event.preventDefault();
+            if (!submit) return;
+
+            setStatus("");
+            const label = submit.textContent;
+            submit.disabled = true;
+            submit.textContent = "Sending…";
+
+            try {
+                const res = await fetch(form.action, {
+                    method: "POST",
+                    headers: { Accept: "application/json" },
+                    body: new URLSearchParams(
+                        new FormData(form) as unknown as Record<string, string>,
+                    ),
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok && data.ok) {
+                    form.hidden = true;
+                    if (success) {
+                        success.hidden = false;
+                        success.setAttribute("tabindex", "-1");
+                        success.focus();
+                    }
+                    return;
+                }
+
+                setStatus(
+                    data.error ||
+                        "Something went wrong. Please email contactform@streanga.com directly.",
+                    "error",
+                );
+            } catch {
+                setStatus(
+                    "Couldn't reach the server. Please email contactform@streanga.com directly.",
+                    "error",
+                );
+            } finally {
+                submit.disabled = false;
+                submit.textContent = label;
+            }
+        });
+    }
+
+    // Fires on the initial load and after every view transition (ClientRouter).
+    document.addEventListener("astro:page-load", initContactForm);
+</script>
