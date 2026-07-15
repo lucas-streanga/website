@@ -1,3 +1,57 @@
+## Runtime environment
+
+Both the website and you (Claude) run inside a **Podman container**. Practical consequences:
+
+- The source at `/website/app` is bind-mounted from the host repo (`./app`), so edits here persist to the host and survive `--rm`. It runs rootless with `userns_mode: "keep-id"`, mapping the container's `node` user to the host user — that's what makes these files writable from inside.
+- The dev server must bind to `0.0.0.0` so the host can reach it — already set via `server.host: true` in `astro.config.mjs`. Don't change it to `localhost`.
+- Hot reload relies on filesystem polling (`vite.server.watch.usePolling: true`) because native inotify events don't cross the bind mount reliably. Leave it on.
+- The port is fixed at `4321` with `strictPort: true`, so the server fails loudly rather than drifting to another port. Don't assume a different port is in use.
+- `node_modules` is a named volume mounted on top of the source, not the host's copy.
+- **Handing images to Claude:** clipboard paste doesn't work (the container has no access to the host's Wayland clipboard, by design). Instead, drop the image on the host into `app/scratch/` (gitignored) and reference it by path, e.g. `scratch/shot.png` — Claude reads image files directly.
+
+## Project structure
+
+This is an Astro site (content-driven personal site + blog) rooted at `app/`. Key locations:
+
+```
+app/
+├── astro.config.mjs        # Site config: domain, container-friendly server, fonts, MDX integration
+├── sync-luna-grammar.mjs   # Prebuild/predev step that syncs the Luna syntax grammar (see package.json scripts)
+├── src/
+│   ├── content/
+│   │   └── blog/           # Blog posts as .md/.mdx, plus their co-located cover images/assets
+│   ├── content.config.ts   # The `blog` collection schema (title, date, description, tags, cover, …) — edit here to add frontmatter fields
+│   ├── pages/              # File-based routes
+│   │   ├── index.astro         # Home page
+│   │   ├── 404.astro
+│   │   └── blog/
+│   │       ├── index.astro     # /blog post index (cards, newest first)
+│   │       └── [...slug].astro # Generates one page per blog entry via getStaticPaths
+│   ├── layouts/
+│   │   ├── BaseLayout.astro     # Shared HTML shell: head/SEO, navbar, global styles
+│   │   └── PostLayout.astro     # Per-post wrapper: cover, title, date, tags, article body
+│   ├── components/          # Reusable .astro components
+│   │   ├── Navbar.astro, ThemeToggle.astro
+│   │   ├── Link.astro, BlurImage.astro   # BlurImage = optimized image w/ blur-up via sharp
+│   │   └── LunaCode.astro                # Renders Luna source with Shiki highlighting
+│   ├── lib/                 # Non-component TypeScript helpers
+│   │   ├── inlineMarkdown.ts       # Minimal inline-Markdown renderer for short strings (e.g. captions)
+│   │   ├── remark-luna-fences.mjs  # Rewrites ```luna fences → <LunaCode> (see "Luna code in a post")
+│   │   └── shiki-luna.ts           # Luna grammar registration for Shiki code highlighting
+│   ├── styles/global.css    # Design tokens (colors/spacing) + global styles; theming lives here
+│   └── assets/              # Images and code snippets imported by pages/components
+└── public/                 # Static files served as-is at the site root
+```
+
+Where to make common changes:
+
+- **New blog post** → add a `.md`/`.mdx` file under `src/content/blog/` matching the schema in `content.config.ts`; it's auto-routed via `[...slug].astro`.
+- **Luna code in a post** → fence it as ` ```luna ` (optionally ` ```luna title="foo.luna" ` for a caption). The `remark-luna-fences.mjs` plugin rewrites the fence to `<LunaCode>`, so you get the framed, syntax-highlighted card (caption + copy button) with **no per-post `import`** — `[...slug].astro` supplies the component via `<Content components={{ LunaCode }} />`. Reusable snippets can instead live at `src/assets/snippets/<name>.luna` and be embedded with `<LunaCode name="<name>" />`. Caveats: fences work in **`.mdx` only** (the rewrite emits an MDX component — a ` ```luna ` block in a `.md` file won't compile), and the plugin is registered on the explicit `unified()` processor in `astro.config.mjs` — Astro 7's default Sätteri processor won't run remark/rehype plugins, so keep `markdown.processor: unified({...})` (not the deprecated `markdown.remarkPlugins`/`rehypePlugins` fields) when adding more.
+- **New frontmatter field** → edit the `blog` schema in `src/content.config.ts` (type-checked everywhere).
+- **New page/route** → add a file under `src/pages/`.
+- **Styling / theme tokens** → `src/styles/global.css`.
+- **Shared markup (nav, SEO head)** → `src/layouts/`.
+
 ## Development
 
 When starting the dev server, use background mode:
@@ -7,6 +61,36 @@ astro dev --background
 ```
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+
+## Running Lighthouse (performance audits)
+
+This is a **host/human task, not an agent one.** Lighthouse needs Chromium, and the
+`claude` sandbox is Debian — its chromium is built for 4 KB pages and SIGTRAPs on this M1's
+16 KB-page kernel (Debian bug #1089647), so **an agent cannot run Lighthouse from its own
+container.** It lives in a separate Fedora image (the `lighthouse` service under the `audit`
+profile), whose aarch64 chromium is 16 KB-safe. Run it yourself:
+
+```
+podman compose --profile audit build lighthouse   # one-time; runs a 16 KB smoke test
+podman compose up -d astro                          # dev server must be up first
+podman compose run --rm lighthouse http://astro:4321 \
+    --output html --output-path /website/app/lighthouse-report.html
+# report -> ./app/lighthouse-report.html (owned by you)
+```
+
+- Reach the dev server by **service name** (`http://astro:4321`), not `localhost` — the two
+  containers share the compose network. Start `astro` first (no `depends_on`, so it won't
+  wait for a cold server).
+- For realistic numbers, audit a **prod build** (dev has HMR overhead): run
+  `astro build && astro preview --host 0.0.0.0` in the astro container and point the runner
+  at that URL instead.
+- Rationale/how: see `Containerfile.lighthouse` and the `lighthouse` service in `compose.yaml`.
+
+**Agents:** don't attempt this in your sandbox (broken chromium, and no container runtime
+inside) — ask the human to run it, or hand them the command above. *(Exception: if the host's
+rootless podman socket has been mounted here and `CONTAINER_HOST` is set, you can launch the
+sibling container yourself — `podman --remote run … localhost/website-lighthouse … --output=json
+--output-path=stdout` — and read the JSON scores back from stdout.)*
 
 ## Documentation
 

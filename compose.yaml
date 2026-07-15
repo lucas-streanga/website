@@ -1,0 +1,94 @@
+x-node-env: &node-env
+  UV_USE_IO_URING: "0"
+services:
+  astro:
+    user: "node"
+    environment: *node-env
+    userns_mode: "keep-id"
+    security_opt: ["seccomp=unconfined"]
+    build:
+      context: .
+      dockerfile: Containerfile
+      shm_size: "1gb"
+    image: localhost/website-dev:latest # tag the shared image so `claude` can reuse it
+    init: true
+    command:
+      [
+        "sh",
+        "-c",
+        "rm -f .astro/dev.json && exec node_modules/.bin/astro dev --host 0.0.0.0",
+      ]
+    ports:
+      - target: 4321
+        published: "4321"
+    volumes:
+      - ./:/website:z
+      - node_modules:/website/app/node_modules # shared with the claude service (below)
+  # --- Lighthouse runner (Asahi / 16 KB pages) --------------------------------------
+  # Separate Fedora image: Debian's chromium SIGTRAPs on this 16 KB-page M1 host; Fedora's
+  # aarch64 chromium doesn't. Purely for running Lighthouse against the dev server.
+  #
+  #   podman compose --profile audit build lighthouse   # build (runs the 16 KB smoke test)
+  #   podman compose up -d astro                          # dev server must be up
+  #   podman compose run --rm lighthouse http://astro:4321 \
+  #       --output html --output-path /website/app/lighthouse-report.html
+  #   # -> report lands at ./app/lighthouse-report.html, owned by you
+  lighthouse:
+    profiles: ["audit"]
+    build:
+      context: .
+      dockerfile: Containerfile.lighthouse
+      shm_size: "1gb"          # chromium needs a real /dev/shm at BUILD (smoke test) too
+    image: localhost/website-lighthouse:latest
+    init: true
+    security_opt: ["seccomp=unconfined"]   # chromium in a container, same as `claude`
+    shm_size: "1gb"                          # ...and at runtime
+    user: "1000"
+    userns_mode: "keep-id"                   # report files stay owned by you
+    working_dir: /website/app
+    environment:
+      HOME: /home/runner
+    volumes:
+      - ./app:/website/app:z   # only so the HTML report can be written back to the host
+  # Claude Code sandbox — same image as astro, so Claude gets the exact Astro + chromium
+  # toolchain and can run the app's own build / Lighthouse. No separate build: it reuses
+  # astro's image tag, so BUILD ASTRO FIRST:
+  #   podman compose build                    # builds + tags the shared image (via astro)
+  #   podman compose run --rm claude          # interactive Claude at the repo root
+  #   podman compose run --rm claude bash     # shell in the sandbox
+  claude:
+    profiles: ["cli"]
+    image: localhost/website-dev:latest # reuse astro's image; do not rebuild
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /website # repo root (git lives here); app is under app/
+    # Run as the image's uid-1000 `node` user and map it to your host user, so files Claude
+    # edits in the bind mount stay owned by YOU — not root, not a stray subuid.
+    user: "node"
+    userns_mode: "keep-id"
+    # Only needed if you want Claude to launch chromium (e.g. run the app's Lighthouse).
+    # Drop both if Claude never drives a browser.
+    security_opt: ["seccomp=unconfined"]
+    shm_size: "1gb" # chromium needs a real /dev/shm at RUNTIME
+    entrypoint: ["claude"]
+    volumes:
+      - ./app:/website/app # bind-mount source (was COPY'd)
+      # Whole-repo mount, as astro does it — enable if Claude need
+      # - ./:/website:z
+      # SAME named volume as astro -> Claude always sees the exact
+      # astro (root) installs into it; Claude reads it. Do `npm install` in the astro container.
+      - node_modules:/website/app/node_modules
+      # Persisted auth/config across rebuilds. Named volume -> NO ':z'; cleared only by `down -v`.
+      - claude-config:/home/node/.claude
+    environment:
+      <<: *node-env
+      HOME: /home/node # `user:` alone doesn't set HOME; be explicit
+      CLAUDE_CONFIG_DIR: /home/node/.claude
+      DISABLE_AUTOUPDATER: "1"
+      # Prefer API-key auth over browser login? Pass it through from your shell, don't hardcode:
+      # ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+
+volumes:
+  claude-config:
+  node_modules:

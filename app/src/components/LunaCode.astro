@@ -1,0 +1,227 @@
+---
+/**
+ * <LunaCode> — render Luna source with syntax highlighting, anywhere in .astro or .mdx.
+ *
+ * Setup:   npm i -D shiki        (types for the grammar module; Astro already ships the runtime)
+ *
+ * Usage in .mdx, the good way (no imports in the page at all):
+ *
+ *   <LunaCode name="a-taste-of-luna" />
+ *
+ * `name` resolves to /src/assets/snippets/<name>.luna, loaded by this component
+ * via an eager `?raw` glob (root-absolute, so it works from any page depth and
+ * regardless of where this component lives). The title defaults to the filename;
+ * override with `title`. A missing name fails the build with the available names
+ * listed. Explicit code still works for one-off snippets:
+ *
+ *   <LunaCode code={`println("hi");`} title="inline" />
+ *
+ * (Needs tooling/luna-files.d.ts on the tsconfig include path for the ?raw types.)
+ *
+ * Notes:
+ * - Plain ```luna fences in .md/.mdx are the OTHER path: they need the grammar registered
+ *   once in astro.config (markdown.shikiConfig.langs, see shiki-luna.ts). This component
+ *   is self-contained instead: Astro's built-in <Code> accepts the grammar object directly
+ *   as `lang`, so it works with zero config, for code arriving as a prop (docs generated
+ *   from the spec, embedded snippets, playground output).
+ * - Theming: the frame reads CSS custom properties with quiet defaults, so the site's
+ *   theme can restyle it without touching this file.
+ */
+import { Code } from "astro:components";
+import { lunaGrammar } from "../lib/shiki-luna";
+
+interface Props {
+    /** Snippet name: loads /src/assets/snippets/<name>.luna. */
+    name?: string;
+    /** Explicit Luna source; alternative to `name` for one-off snippets. */
+    code?: string;
+    /** Optional caption; defaults to "<name>.luna" when `name` is used. */
+    title?: string;
+}
+
+const snippets = import.meta.glob("/src/assets/snippets/*.luna", {
+    query: "?raw",
+    import: "default",
+    eager: true,
+}) as Record<string, string>;
+
+const { name, code, title } = Astro.props;
+
+if ((name === undefined) === (code === undefined)) {
+    throw new Error("<LunaCode> takes exactly one of `name` or `code`.");
+}
+
+let raw: string;
+if (name !== undefined) {
+    const key = `/src/assets/snippets/${name}.luna`;
+    const found = snippets[key];
+    if (found === undefined) {
+        const available = Object.keys(snippets)
+            .map((k) =>
+                k
+                    .split("/")
+                    .pop()
+                    ?.replace(/\.luna$/, ""),
+            )
+            .join(", ");
+        throw new Error(
+            `<LunaCode> found no snippet "${name}". Available: ${available || "(none)"}.`,
+        );
+    }
+    raw = found;
+} else {
+    raw = code!;
+}
+
+const caption = title ?? (name !== undefined ? `${name}.luna` : undefined);
+const source = raw.replace(/^\n+|\s+$/g, "");
+---
+
+<figure class="luna-code">
+    {caption && <figcaption class="luna-code__title">{caption}</figcaption>}
+    <div class="luna-code__body">
+        <Code
+            code={source}
+            lang={lunaGrammar}
+            themes={{ light: "everforest-dark", dark: "everforest-dark" }}
+            defaultColor={false}
+        />
+        <!-- Theme note: everforest-dark in BOTH site modes (both `themes` keys are
+         the same on purpose) — the code card is a deliberate always-dark "embedded
+         terminal". One theme across modes is what makes the syntax hues identical
+         on toggle; a light variant can't match it. everforest-LIGHT is too low
+         contrast (gold strings ~1.9:1 on any light bg), and readable warm light
+         themes (gruvbox, ayu) don't share everforest's hue mapping, so the palette
+         jumped on toggle. The card stays dark in both site modes; only the backdrop
+         hue follows the page via --color-code-surface — pine-green in light (with
+         the mint page), warm brown in dark. everforest-dark clears AA on both
+         (~L0.03): keywords ~4.5:1, numbers/operators ~5.5, functions ~6.3, strings
+         ~6.9, identifiers ~7.5; the muted comments sit at ~3.8. Chrome text uses
+         everforest's fg cream (--color-code-fg) for a crisp ~6.8:1 on the strip. -->
+        <button class="luna-code__copy" type="button" data-code={source}
+            >Copy</button
+        >
+    </div>
+</figure>
+
+<script>
+    for (const btn of document.querySelectorAll<HTMLButtonElement>(
+        ".luna-code__copy",
+    )) {
+        btn.addEventListener("click", async () => {
+            await navigator.clipboard.writeText(btn.dataset.code ?? "");
+            const label = btn.textContent;
+            btn.textContent = "Copied";
+            setTimeout(() => {
+                btn.textContent = label;
+            }, 1500);
+        });
+    }
+</script>
+
+<style>
+    /* Reads the host site's tokens (global.css) with quiet standalone fallbacks. */
+    .luna-code {
+        --lc-border: var(--color-code-border, #4a3a2d);
+        --lc-chrome-bg: var(--color-code-chrome, #463528);
+        --lc-chrome-fg: var(--color-code-fg, #b6a899);
+        --lc-code-bg: var(--color-code-surface, #3f3025);
+        --lc-radius: var(--radius, 0.625rem);
+        --lc-font: var(
+            --luna-code-font,
+            ui-monospace,
+            "SF Mono",
+            "JetBrains Mono",
+            Menlo,
+            monospace
+        );
+
+        margin-block: var(--space-8, 2rem);
+        border: 1px solid var(--lc-border);
+        border-radius: var(--lc-radius);
+        overflow: hidden;
+        background: var(--lc-code-bg);
+        box-shadow: var(--shadow, none);
+    }
+
+    .luna-code__title {
+        padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+        background: var(--lc-chrome-bg);
+        color: var(--lc-chrome-fg);
+        font-family: var(--lc-font);
+        font-size: var(--text-sm, 0.85rem);
+        letter-spacing: 0.03em;
+        border-bottom: 1px solid var(--lc-border);
+    }
+
+    .luna-code__body {
+        position: relative;
+    }
+
+    /* Syntax colors are shiki's tokens: it emits --shiki-light/--shiki-dark
+     per token (defaultColor: false), resolved with light-dark(), which follows
+     color-scheme (html[data-theme] sets it). The BACKGROUND, however, is ours
+     (see the pre rule below), not shiki's theme background. Selectors target
+     pre/span directly, NOT a class: Astro's <Code> renames shiki's `.shiki` to
+     `.astro-code`, and element selectors under our scope are immune to both. */
+    .luna-code__body :global(pre),
+    .luna-code__body :global(pre span) {
+        color: light-dark(var(--shiki-light), var(--shiki-dark));
+    }
+    /* Our own surface token, not shiki's theme background (pure white in
+     light, a cool grey in dark — both clash with the mint/warm palette).
+     The leading `.luna-code` lifts specificity above PostLayout's
+     `.prose :global(pre)`, so no !important is needed and the two rules
+     no longer flip on first paint. */
+    .luna-code .luna-code__body :global(pre) {
+        background-color: var(--lc-code-bg);
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .luna-code__body :global(pre) {
+        width: 100%;
+        max-width: none; /* prose/post styles must not narrow the code surface */
+        margin: 0;
+        padding: var(--space-4, 1rem);
+        font-family: var(--lc-font);
+        font-size: var(--text-sm, 0.85rem);
+        line-height: 1.6;
+        overflow-x: auto;
+        tab-size: 2;
+    }
+    .luna-code__body :global(pre code) {
+        display: block; /* the line spans fill the scroll width */
+        font: inherit;
+        color: inherit;
+        background: none; /* neutralize the site's inline-code styling */
+        padding: 0;
+    }
+
+    .luna-code__copy {
+        position: absolute;
+        top: var(--space-2, 0.5rem);
+        right: var(--space-2, 0.5rem);
+        padding: 0.15rem var(--space-3, 0.75rem);
+        font: 500 var(--text-sm, 0.75rem) var(--lc-font);
+        color: var(--lc-chrome-fg);
+        background: var(--lc-chrome-bg);
+        border: 1px solid var(--lc-border);
+        border-radius: calc(var(--lc-radius) / 2);
+        cursor: pointer;
+        opacity: 0;
+        transition:
+            opacity 0.15s ease,
+            border-color 0.15s ease;
+    }
+
+    .luna-code__body:hover .luna-code__copy,
+    .luna-code__copy:focus-visible {
+        opacity: 1;
+    }
+    .luna-code__copy:hover {
+        border-color: var(--color-brand, currentColor);
+    }
+    /* :focus-visible outline: the site's global rule already covers buttons. */
+</style>

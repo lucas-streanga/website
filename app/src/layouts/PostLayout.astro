@@ -206,4 +206,49 @@ const formattedDate = date.toLocaleDateString("en-US", {
         border-block-start: 1px solid var(--color-border);
         margin-block: var(--space-12);
     }
+
+    /* ---- Tables: a card that echoes the code block's frame ---- */
+    .prose :global(.table-wrap) {
+        margin-block: var(--space-8);
+        overflow-x: auto; /* wide tables scroll; the radius clips the corners */
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        box-shadow: var(--shadow);
+    }
+    .prose :global(.table-wrap table) {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: var(--text-sm);
+        line-height: 1.5;
+    }
+    .prose :global(.table-wrap th),
+    .prose :global(.table-wrap td) {
+        padding: var(--space-3) var(--space-4);
+        text-align: left;
+        vertical-align: top;
+    }
+    /* Header strip — same sunken tone as the code block's title bar. */
+    .prose :global(.table-wrap thead th) {
+        background: var(--color-surface-sunken);
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+        border-block-end: 1px solid var(--color-border);
+    }
+    /* Hairline between rows + a quiet zebra stripe for scanning. */
+    .prose :global(.table-wrap tbody tr + tr) {
+        border-block-start: 1px solid var(--color-border);
+    }
+    .prose :global(.table-wrap tbody tr:nth-child(even)) {
+        background: color-mix(
+            in srgb,
+            var(--color-surface-sunken) 45%,
+            transparent
+        );
+    }
+    /* First column reads as the row label. */
+    .prose :global(.table-wrap td:first-child) {
+        font-weight: 600;
+    }
 </style>
