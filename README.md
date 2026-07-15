@@ -2,4 +2,4 @@
 Personal Website built with Astro
 
 # Build
-run `podman compose up` in `app/`. Requires `podman` and `docker-compose`. Ensure the podman user socket is listening, typically via systemd. 
+run `podman compose build` and `podman compose up`. Requires `podman` and `docker-compose`.
