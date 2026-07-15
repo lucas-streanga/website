@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="streanga.com">
   <rect width="64" height="64" rx="14" fill="#357258"/>
-  <text x="32" y="34" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
-        font-size="38" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">S</text>
+  <!-- "S" traced from favicon.ico so the SVG renders identically to the raster in every
+       engine. The old <text> relied on system-ui + dominant-baseline, which each browser
+       positioned differently (that's why it looked shifted). A path removes that ambiguity. -->
+  <path fill="#ffffff" d="M31.39 15.5 L34.83 15.69 L39.77 16.36 L40.98 17.03 L41.48 18.13 L41.29 22.17 L40.95 22.63 L39.23 22.47 L38.45 21.86 L37.22 21.53 L32.18 21.01 L30.24 21.21 L28.7 21.69 L28.35 21.91 L27.68 23.44 L27.87 24.64 L28.53 25.47 L29.29 25.69 L30.06 26.31 L34.76 27.03 L36.73 27.81 L38.45 28.19 L41.14 29.85 L42.64 32.05 L42.96 33.54 L42.99 36.78 L42.81 38.74 L42.48 39.78 L41.86 40.36 L41.47 41.3 L40.14 42.64 L38.86 43.19 L38.11 43.82 L37.07 44.14 L32.11 44.67 L25.96 44.14 L24.23 43.81 L23.12 43.19 L22.03 42.96 L21.52 42.64 L21.22 42.09 L21.21 37.72 L21.71 36.87 L22.46 36.87 L23.05 37.31 L24.45 37.69 L25.94 38.48 L31.16 39.17 L34.45 38.65 L35.13 38.15 L35.95 36.98 L35.82 35.22 L34.47 33.86 L26.22 31.82 L23.52 30.29 L21.86 28.47 L21.36 27.59 L20.84 24.34 L21.04 22.41 L21.53 20.21 L23.03 18.2 L24.03 17.36 L26.06 16.19 L28.79 15.69Z"/>
 </svg>

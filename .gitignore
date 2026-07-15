@@ -144,3 +144,5 @@ vite.config.ts.timestamp-*
 
 # Astro generated files
 .astro/
+
+app/scratch/

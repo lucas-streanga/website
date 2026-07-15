@@ -69,8 +69,10 @@ const SITE_NAME = "streanga.com";
         <link rel="canonical" href={canonicalURL} />
         <!-- Favicons. The SVG covers modern browsers; add the PNG/ICO files to
          /public if you want broader coverage (see notes). -->
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <!-- ?v=2 busts browsers' aggressive favicon cache after the icon was
+             regenerated; bump it whenever the icon art changes. -->
+        <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico?v=2" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <!-- Open Graph (Slack, Discord, iMessage, Facebook, LinkedIn, …) -->
         <meta property="og:type" content={type} />
