@@ -65,7 +65,7 @@
     --font-sans:
         var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
         Roboto, Helvetica, Arial, sans-serif;
-    --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    --font-display: var(--font-literata), Georgia, "Times New Roman", serif;
 
     --text-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.95rem);
     --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);

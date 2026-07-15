@@ -68,9 +68,9 @@ export default defineConfig({
     },
     {
       provider: fontProviders.fontsource(),
-      name: "Fraunces",
-      cssVariable: "--font-fraunces",
-      weights: ["100 900"],
+      name: "Literata",
+      cssVariable: "--font-literata",
+      weights: ["200 900"],
       styles: ["normal", "italic"],
     },
   ],
