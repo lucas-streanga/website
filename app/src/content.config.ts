@@ -2,8 +2,8 @@ import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 
-// One schema, enforced across every post. Add a field here and it's required
-// (or optional) everywhere automatically, with type-checking in your editor.
+// One schema enforced across every post: add a field here and it's required (or
+// optional) everywhere, type-checked in your editor.
 const blog = defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
     schema: ({ image }) =>
@@ -13,7 +13,7 @@ const blog = defineCollection({
             description: z.string(),
             tags: z.array(z.string()).default([]),
             cover: image(), // path relative to the post file, e.g. ./cover.png
-            coverAlt: z.string().default(""), // accessibility text (for screen readers)
+            coverAlt: z.string().default(""),
             coverCaption: z.string().optional(), // visible caption / credit under the image
         }),
 });

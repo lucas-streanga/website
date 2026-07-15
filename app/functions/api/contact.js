@@ -1,19 +1,6 @@
-// Cloudflare Pages Function — POST /api/contact
-//
-// Validates the home-page contact form and emails the message to
-// contactform@streanga.com via the Resend REST API.
-//
-// Two response shapes, chosen by the request's Accept header:
-//   - fetch() submit (Accept: application/json)  -> JSON { ok: true } / { ok: false, error }
-//   - native no-JS form POST                     -> 303 redirect to /contact/thanks on
-//                                                    success, or a minimal HTML error page
-//
-// Requires the RESEND_API_KEY environment variable, set in the Pages project
-// settings (Settings -> Environment variables). Nothing else to provision:
-// Pages Functions deploy automatically alongside the static build.
-//
-// Written as plain JS on purpose: this runs in the Cloudflare Workers runtime,
-// not the Astro build, so it stays out of `astro check` and needs no extra deps.
+// Pages Function (POST /api/contact): validates the contact form and emails it
+// to contactform@streanga.com via Resend. Requires the RESEND_API_KEY env var.
+// Plain JS, not TS: it runs in the Workers runtime, so it stays out of `astro check`.
 
 const TO = "contactform@streanga.com";
 const FROM = "streanga.com <noreply@streanga.com>";
@@ -21,8 +8,7 @@ const THANKS_URL = "/contact/thanks";
 const MAX_MESSAGE = 1024;
 const MAX_NAME = 256;
 
-// Deliberately loose: one @, a dot in the domain, no spaces. Real validation of
-// an address is "does mail to it bounce" — the browser already did type=email.
+// Loose on purpose — real validation is whether mail bounces; the browser did type=email.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function escapeHtml(value) {
@@ -50,7 +36,7 @@ export async function onRequestPost(context) {
         "application/json",
     );
 
-    // Unified responder so validation/send logic doesn't care which client called.
+    // One responder for both callers: JSON for fetch(), 303-to-thanks / HTML for no-JS.
     const respond = (ok, statusCode, error) => {
         if (wantsJson) {
             return new Response(
@@ -80,8 +66,7 @@ export async function onRequestPost(context) {
         return respond(false, 400, "Invalid form submission.");
     }
 
-    // Honeypot: a real person leaves this empty. Silently accept + drop so bots
-    // get an indistinguishable success and don't learn they were caught.
+    // Honeypot: humans leave it empty. Silently succeed so bots can't tell they were caught.
     if (String(form.get("website") || "").trim() !== "") {
         return respond(true, 200);
     }

@@ -55,9 +55,7 @@ import me from "../assets/me.jpg";
         padding-block: clamp(var(--space-12), 6vw, var(--space-16))
             clamp(var(--space-16), 8vw, var(--space-24));
     }
-    /* A hairline that fades to transparent at both ends — a soft seam above the
-       contact section instead of a hard full-bleed rule. Width tracks the
-       container so the solid middle sits under the content, ends dissolve. */
+    /* Fading hairline as a soft seam above the section, instead of a hard rule. */
     .contact::before {
         content: "";
         position: absolute;

@@ -1,8 +1,6 @@
-// inlineMarkdown.ts
-// Minimal inline-Markdown renderer for short strings like image captions.
-// Supports links written as [text](url). Everything else is HTML-escaped, so
-// the output is safe to pass to set:html and raw HTML in the source is shown
-// literally rather than interpreted.
+// Minimal inline-Markdown renderer for short strings like image captions: only
+// [text](url) links. Everything else is HTML-escaped, so the output is safe to
+// pass to set:html and raw HTML in the source renders literally, not interpreted.
 
 function escapeHtml(s: string): string {
     return s
@@ -20,7 +18,6 @@ export function inlineMarkdown(input: string): string {
     let m: RegExpExecArray | null;
 
     while ((m = LINK.exec(input)) !== null) {
-        // Escaped text before this link.
         out += escapeHtml(input.slice(last, m.index));
 
         const text = escapeHtml(m[1]);
@@ -35,7 +32,6 @@ export function inlineMarkdown(input: string): string {
         last = m.index + m[0].length;
     }
 
-    // Remaining escaped text after the last link.
     out += escapeHtml(input.slice(last));
     return out;
 }

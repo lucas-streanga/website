@@ -52,6 +52,10 @@ Where to make common changes:
 - **Styling / theme tokens** → `src/styles/global.css`.
 - **Shared markup (nav, SEO head)** → `src/layouts/`.
 
+## Code style
+
+- **Comments explain _why_, not _what_.** The code already shows what it does; a comment earns its place only by capturing what the code can't — a non-obvious constraint, a gotcha, a cross-file contract, a rejected alternative. Prefer one dense line of rationale over a paragraph restating the form of the code. If a comment could be deleted without losing intent a reader couldn't recover from the code itself, delete it.
+
 ## Development
 
 When starting the dev server, use background mode:

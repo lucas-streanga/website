@@ -25,10 +25,9 @@ const {
     widths,
 } = Astro.props;
 
-// Build a responsive srcset by default, so every image gets one without the
-// caller having to pass `widths`. Candidates are capped at the source's real
-// width (Astro never upscales), with the intrinsic width kept as the ceiling.
-// An explicit `widths` prop is respected as-is.
+// Build a responsive srcset by default so callers needn't pass `widths`.
+// Candidates are capped at the source's real width (Astro never upscales);
+// an explicit `widths` prop is respected as-is.
 const CANDIDATE_WIDTHS = [360, 640, 828, 1080, 1600];
 const maxWidth = src.width;
 const responsiveWidths =
@@ -40,14 +39,13 @@ const responsiveWidths =
                   maxWidth,
               ]),
           ].sort((a, b) => a - b);
-// A srcset needs a companion `sizes`; fall back to full-width if unset so the
-// two are never mismatched. Callers should pass a real `sizes` for best results.
+// A srcset needs a companion `sizes`; fall back to full-width so the two are
+// never mismatched (callers should pass a real `sizes` for best results).
 const responsiveSizes = sizes ?? "100vw";
 
-// Generate the low-quality blur-up placeholder once, at build time — but ONLY
-// for opaque images. For images with real transparency (e.g. a transparent PNG
-// or SVG diagram), the blurred copy would show through the transparent areas as
-// a halo, so we skip it and render a plain optimized image instead.
+// Build the blur-up placeholder at build time, but ONLY for opaque images:
+// with real transparency (transparent PNG/SVG) the blurred copy shows through
+// the transparent areas as a halo, so we skip it and render a plain image instead.
 let placeholder = "";
 try {
     const fsPath = (src as ImageMetadata & { fsPath: string }).fsPath;
@@ -60,10 +58,8 @@ try {
             .toBuffer();
         placeholder = `data:image/webp;base64,${buf.toString("base64")}`;
     }
-    // Not opaque → leave placeholder empty so no blur layer is painted behind it.
 } catch {
-    // If detection/generation fails, fall back to no placeholder — the image
-    // still renders, just without the blur-up.
+    // Detection/generation failed → no placeholder; the image still renders, just without the blur-up.
     placeholder = "";
 }
 ---
@@ -82,9 +78,8 @@ try {
         priority={priority}
     />
     <script is:inline>
-        // Runs synchronously, before paint. If the image is already loaded
-        // (cached / instant), do nothing — it stays visible with no fade.
-        // Only when it's still pending do we hide it and fade it in on load.
+        // Runs before paint: if the image is already loaded (cached), leave it
+        // visible with no fade; only hide + fade-in when it's still pending.
         (function () {
             var s = document.currentScript;
             var wrap = s && s.closest(".blur-image");
@@ -110,10 +105,9 @@ try {
         background-position: center;
         background-repeat: no-repeat;
     }
-    /* The Image renders its own <img>; make it fill and cover the wrapper so the
-     decoded (opaque) photo hides the blur underneath it. Default is fully
-     visible — so a no-JS visitor and any already-loaded (cached) image show
-     instantly with no fade. */
+    /* Fill and cover the wrapper so the decoded photo hides the blur underneath.
+     Default is fully visible — so a no-JS visitor and any already-loaded (cached)
+     image show instantly with no fade. */
     .blur-image :global(img) {
         display: block;
         width: 100%;
@@ -121,8 +115,8 @@ try {
         object-fit: cover;
         transition: opacity 0.5s ease;
     }
-    /* The inline script adds .is-loading only when the image is still pending;
-     it then adds .is-loaded on load, which cross-fades it in over the blur. */
+    /* Script adds .is-loading only while the image is pending, then .is-loaded
+     on load — cross-fading it in over the blur. */
     .blur-image.is-loading :global(img) {
         opacity: 0;
     }

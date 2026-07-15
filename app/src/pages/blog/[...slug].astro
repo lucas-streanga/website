@@ -1,6 +1,6 @@
 ---
-// Generates one page per blog entry. Markdown in a collection is no longer
-// auto-routed, so this file is what turns each post into /blog/<id>.
+// Markdown in a collection is no longer auto-routed, so this file generates one
+// page per blog entry — turning each post into /blog/<id>.
 import { getCollection, render } from "astro:content";
 import PostLayout from "../../layouts/PostLayout.astro";
 // Provided to <Content> so ```luna fences (rewritten to <LunaCode> by the

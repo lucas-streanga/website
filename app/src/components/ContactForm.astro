@@ -1,20 +1,8 @@
 ---
-// Contact form for the home page. Posts to the /api/contact Pages Function
-// (see app/functions/api/contact.js), which emails the message to
-// contactform@streanga.com via Resend.
-//
-// Layout mirrors the hero's two-column grid: an intro column (heading + lead +
-// a direct-email fallback) on the left, the form on the right. Stacks to one
-// column on narrow screens.
-//
-// Progressive enhancement:
-//   - No JS: a native <form method="POST"> submit hits the function, which
-//     303-redirects to /contact/thanks. The site stays fully usable without JS.
-//   - JS: the submit is intercepted, sent via fetch(), and an inline "thanks"
-//     panel replaces the form — no navigation.
-//
-// All colors/spacing come from the tokens in styles/global.css, so it themes
-// (light/dark) automatically.
+// Contact form for the home page; posts to the /api/contact Pages Function.
+// Progressive enhancement: without JS the form posts natively and redirects to
+// /contact/thanks; with JS the submit is intercepted and an inline panel
+// replaces the form.
 const MAX_MESSAGE = 1024;
 ---
 
@@ -78,9 +66,7 @@ const MAX_MESSAGE = 1024;
                 ></span>
             </div>
 
-            {/* Honeypot: off-screen + hidden from assistive tech, but still in
-                the DOM and submitted. A real person never fills it; the server
-                silently drops any submission where it's non-empty. */}
+            {/* Honeypot: hidden from humans + AT but still submitted; the server drops it if non-empty. */}
             <div class="hp" aria-hidden="true">
                 <label for="cf-website">Website</label>
                 <input
@@ -100,8 +86,7 @@ const MAX_MESSAGE = 1024;
             </p>
         </form>
 
-        {/* Shown (via JS) after a successful fetch submit, in place of the
-            form. Sibling of the form so the enhancement script can find it. */}
+        {/* Sibling of the form so the script can swap it in on success. */}
         <div
             class="form-success"
             data-success
@@ -157,9 +142,8 @@ const MAX_MESSAGE = 1024;
         display: grid;
         gap: var(--space-6);
     }
-    /* An explicit `display` beats the UA [hidden]{display:none}, so hiding the
-       form on success needs its own rule — otherwise it stays visible and the
-       confirmation panel renders crammed beneath the still-shown Send button. */
+    /* Explicit display beats the UA [hidden]{display:none}; without this the
+       form won't hide on success. */
     .form[hidden] {
         display: none;
     }
@@ -194,8 +178,7 @@ const MAX_MESSAGE = 1024;
         color: var(--color-text-muted);
         opacity: 0.7;
     }
-    /* Accent the border on focus; the global :focus-visible rule (global.css)
-       still supplies the keyboard focus ring on top. */
+    /* Global :focus-visible still adds the keyboard ring on top of this. */
     input:focus,
     textarea:focus {
         border-color: var(--color-accent);
@@ -229,7 +212,6 @@ const MAX_MESSAGE = 1024;
         color: var(--color-accent-strong);
     }
 
-    /* Replaces the form inside the card on success, so it needs no offset. */
     .form-success h3 {
         font-size: var(--text-lg);
     }
@@ -238,8 +220,7 @@ const MAX_MESSAGE = 1024;
         color: var(--color-text-muted);
     }
 
-    /* Honeypot. Pushed off-screen rather than display:none — some bots skip
-       display:none/hidden fields, but happily fill a positioned one. */
+    /* Off-screen, not display:none — some bots skip hidden fields but fill positioned ones. */
     .hp {
         position: absolute;
         left: -9999px;
@@ -248,7 +229,6 @@ const MAX_MESSAGE = 1024;
         overflow: hidden;
     }
 
-    /* Stack the two columns on narrow screens (matches the hero breakpoint). */
     @media (max-width: 48rem) {
         .contact-grid {
             grid-template-columns: 1fr;
@@ -264,8 +244,7 @@ const MAX_MESSAGE = 1024;
         const form = document.getElementById(
             "contact-form",
         ) as HTMLFormElement | null;
-        // Only present on the home page; also guard against double-init across
-        // view transitions (astro:page-load can fire for the same DOM).
+        // Guard against double-init: astro:page-load can re-fire for the same DOM.
         if (!form || form.dataset.enhanced === "true") return;
         form.dataset.enhanced = "true";
 
@@ -277,8 +256,7 @@ const MAX_MESSAGE = 1024;
         const success =
             form.parentElement?.querySelector<HTMLElement>("[data-success]");
 
-        // Character counter — JS only. Without JS it stays hidden and the
-        // maxlength attribute still caps the field.
+        // JS-only nicety; maxlength still caps the field without it.
         if (message && counter) {
             const update = () => {
                 const len = message.value.length;
@@ -298,8 +276,7 @@ const MAX_MESSAGE = 1024;
         };
 
         form.addEventListener("submit", async (event) => {
-            // The submit event only fires once native HTML validation passes,
-            // so required/email/maxlength are already satisfied here.
+            // Native validation already passed — submit doesn't fire otherwise.
             event.preventDefault();
             if (!submit) return;
 
@@ -345,6 +322,6 @@ const MAX_MESSAGE = 1024;
         });
     }
 
-    // Fires on the initial load and after every view transition (ClientRouter).
+    // Runs on initial load and after each view transition.
     document.addEventListener("astro:page-load", initContactForm);
 </script>

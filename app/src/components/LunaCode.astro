@@ -2,30 +2,28 @@
 /**
  * <LunaCode> — render Luna source with syntax highlighting, anywhere in .astro or .mdx.
  *
- * Setup:   npm i -D shiki        (types for the grammar module; Astro already ships the runtime)
+ * Setup: `npm i -D shiki` (types for the grammar module; Astro ships the runtime).
  *
  * Usage in .mdx, the good way (no imports in the page at all):
  *
  *   <LunaCode name="a-taste-of-luna" />
  *
- * `name` resolves to /src/assets/snippets/<name>.luna, loaded by this component
- * via an eager `?raw` glob (root-absolute, so it works from any page depth and
- * regardless of where this component lives). The title defaults to the filename;
- * override with `title`. A missing name fails the build with the available names
- * listed. Explicit code still works for one-off snippets:
+ * `name` resolves to /src/assets/snippets/<name>.luna via an eager `?raw` glob —
+ * root-absolute, so it works from any page depth regardless of where this component
+ * lives. Title defaults to the filename; override with `title`. A missing name fails
+ * the build with the available names listed. Explicit code still works for one-offs:
  *
  *   <LunaCode code={`println("hi");`} title="inline" />
  *
  * (Needs tooling/luna-files.d.ts on the tsconfig include path for the ?raw types.)
  *
  * Notes:
- * - Plain ```luna fences in .md/.mdx are the OTHER path: they need the grammar registered
- *   once in astro.config (markdown.shikiConfig.langs, see shiki-luna.ts). This component
- *   is self-contained instead: Astro's built-in <Code> accepts the grammar object directly
- *   as `lang`, so it works with zero config, for code arriving as a prop (docs generated
- *   from the spec, embedded snippets, playground output).
- * - Theming: the frame reads CSS custom properties with quiet defaults, so the site's
- *   theme can restyle it without touching this file.
+ * - Plain ```luna fences in .md/.mdx are the OTHER path: they need the grammar
+ *   registered once in astro.config (see shiki-luna.ts). This component is
+ *   self-contained instead — Astro's <Code> accepts the grammar object directly as
+ *   `lang`, so it works with zero config for code arriving as a prop.
+ * - Theming: the frame reads CSS custom properties with quiet defaults, so the
+ *   site's theme can restyle it without touching this file.
  */
 import { Code } from "astro:components";
 import { lunaGrammar } from "../lib/shiki-luna";
@@ -86,18 +84,13 @@ const source = raw.replace(/^\n+|\s+$/g, "");
             themes={{ light: "everforest-dark", dark: "everforest-dark" }}
             defaultColor={false}
         />
-        <!-- Theme note: everforest-dark in BOTH site modes (both `themes` keys are
-         the same on purpose) — the code card is a deliberate always-dark "embedded
-         terminal". One theme across modes is what makes the syntax hues identical
-         on toggle; a light variant can't match it. everforest-LIGHT is too low
-         contrast (gold strings ~1.9:1 on any light bg), and readable warm light
-         themes (gruvbox, ayu) don't share everforest's hue mapping, so the palette
-         jumped on toggle. The card stays dark in both site modes; only the backdrop
-         hue follows the page via --color-code-surface — pine-green in light (with
-         the mint page), warm brown in dark. everforest-dark clears AA on both
-         (~L0.03): keywords ~4.5:1, numbers/operators ~5.5, functions ~6.3, strings
-         ~6.9, identifiers ~7.5; the muted comments sit at ~3.8. Chrome text uses
-         everforest's fg cream (--color-code-fg) for a crisp ~6.8:1 on the strip. -->
+        <!-- everforest-dark in BOTH site modes on purpose: the card is a deliberate
+         always-dark "embedded terminal", and one theme across modes keeps the syntax
+         hues identical on toggle. Rejected: everforest-LIGHT is too low contrast (gold
+         strings ~1.9:1 on light), and warm light themes (gruvbox, ayu) don't share
+         everforest's hue mapping, so the palette jumped on toggle. Only the backdrop
+         hue follows the page via --color-code-surface. everforest-dark clears AA on
+         both backdrops (keywords ~4.5:1 up to identifiers ~7.5; muted comments ~3.8). -->
         <button class="luna-code__copy" type="button" data-code={source}
             >Copy</button
         >
@@ -158,21 +151,19 @@ const source = raw.replace(/^\n+|\s+$/g, "");
         position: relative;
     }
 
-    /* Syntax colors are shiki's tokens: it emits --shiki-light/--shiki-dark
-     per token (defaultColor: false), resolved with light-dark(), which follows
-     color-scheme (html[data-theme] sets it). The BACKGROUND, however, is ours
-     (see the pre rule below), not shiki's theme background. Selectors target
-     pre/span directly, NOT a class: Astro's <Code> renames shiki's `.shiki` to
-     `.astro-code`, and element selectors under our scope are immune to both. */
+    /* Shiki emits --shiki-light/--shiki-dark per token (defaultColor: false),
+     resolved with light-dark(), which follows color-scheme (set by html[data-theme]).
+     Target pre/span directly, NOT a class: Astro's <Code> renames shiki's `.shiki`
+     to `.astro-code`, so element selectors are immune. Background is ours (below),
+     not shiki's theme background. */
     .luna-code__body :global(pre),
     .luna-code__body :global(pre span) {
         color: light-dark(var(--shiki-light), var(--shiki-dark));
     }
-    /* Our own surface token, not shiki's theme background (pure white in
-     light, a cool grey in dark — both clash with the mint/warm palette).
-     The leading `.luna-code` lifts specificity above PostLayout's
-     `.prose :global(pre)`, so no !important is needed and the two rules
-     no longer flip on first paint. */
+    /* Our surface token, not shiki's theme background (white / cool grey clash
+     with the mint/warm palette). The leading `.luna-code` lifts specificity above
+     PostLayout's `.prose :global(pre)`, so no !important is needed and the two
+     rules no longer flip on first paint. */
     .luna-code .luna-code__body :global(pre) {
         background-color: var(--lc-code-bg);
         transition:
