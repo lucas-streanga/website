@@ -6,10 +6,11 @@
     id="theme-toggle"
     type="button"
     class="theme-toggle"
-    aria-label="Switch to dark mode"
-    aria-pressed="false"
+    disabled
+    aria-label="Current theme"
 >
-    <!-- Sun: shown in dark mode (i.e. "switch to light") -->
+    <!-- Icon shows the current theme (sun = light, moon = dark) so it reads as
+         an indicator; JS removes `disabled` to make it a real toggle. -->
     <svg
         class="icon icon-sun"
         viewBox="0 0 24 24"
@@ -24,7 +25,6 @@
             d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"
         ></path>
     </svg>
-    <!-- Moon: shown in light mode (i.e. "switch to dark") -->
     <svg
         class="icon icon-moon"
         viewBox="0 0 24 24"
@@ -49,26 +49,38 @@
         border-radius: 999px;
         transition:
             background-color 0.15s ease,
-            border-color 0.15s ease,
-            transform 0.15s ease;
+            border-color 0.15s ease;
     }
-    .theme-toggle:hover {
+    /* Inert indicator until JS enables it (see the `disabled` attr + script). */
+    .theme-toggle:disabled {
+        cursor: default;
+        opacity: 1;
+    }
+    .theme-toggle:not(:disabled):hover {
         border-color: var(--color-accent);
-        transform: translateY(-1px);
     }
     .icon {
         inline-size: 1.15rem;
         block-size: 1.15rem;
     }
 
-    .icon-sun {
+    .icon-moon {
         display: none;
     }
     :global(html[data-theme="dark"]) .icon-sun {
-        display: block;
+        display: none;
     }
     :global(html[data-theme="dark"]) .icon-moon {
-        display: none;
+        display: block;
+    }
+    /* No explicit choice yet → the page follows the OS, so the icon must too. */
+    @media (prefers-color-scheme: dark) {
+        :global(html:not([data-theme])) .icon-sun {
+            display: none;
+        }
+        :global(html:not([data-theme])) .icon-moon {
+            display: block;
+        }
     }
 </style>
 
@@ -107,6 +119,9 @@
     }
 
     syncButton(effectiveTheme());
+
+    // Enable the control now that JS can handle clicks (inert without JS).
+    toggle?.removeAttribute("disabled");
 
     toggle?.addEventListener("click", () => {
         setTheme(effectiveTheme() === "dark" ? "light" : "dark");
