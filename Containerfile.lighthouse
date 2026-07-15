@@ -1,0 +1,45 @@
+# Containerfile.lighthouse
+# ------------------------------------------------------------------------------------
+# Lighthouse runner for this Asahi Linux (M1 Pro) host — a 16 KB-page kernel.
+#
+# The astro/claude image (Debian) is useless here: Debian's chromium is compiled with a
+# 4 KB page-allocation granularity and SIGTRAPs (exit 133) on a 16 KB kernel — Debian bug
+# #1089647. Fedora's aarch64 chromium carries the ARM64 large-page patches (it's the build
+# Fedora Asahi Remix runs on this same 16 KB kernel), so it works. Base tag matches the
+# host release (fc44) to land the same working chromium.
+FROM fedora:44
+
+# chromium is in Fedora's MAIN repo (no RPM Fusion). nodejs/npm run Lighthouse itself.
+RUN dnf -y install --setopt=install_weak_deps=False \
+      chromium nodejs npm \
+      liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts \
+ && dnf clean all
+
+# Use the system chromium; never let puppeteer/lighthouse fetch its own (4 KB) build.
+ENV CHROME_PATH=/usr/bin/chromium
+ENV PUPPETEER_SKIP_DOWNLOAD=1
+
+# Lighthouse CLI, pinned to the app's devDependency line (^13).
+RUN npm install -g lighthouse@13
+
+# BUILD-TIME SMOKE TEST — `podman build` runs on the host's 16 KB kernel, so this actually
+# proves chromium survives 16 KB pages on THIS machine. Loud build failure if it regresses.
+RUN chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+      --dump-dom about:blank | grep -q "<html" \
+ && echo "chromium OK on $(getconf PAGE_SIZE)-byte pages"
+
+# Convenience entrypoint: always inject the container-safe chrome flags, so callers pass
+# only a URL + output options. Override with `--entrypoint lighthouse` for raw control.
+RUN printf '%s\n' \
+      '#!/bin/sh' \
+      'exec lighthouse --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu" "$@"' \
+      > /usr/local/bin/audit && chmod +x /usr/local/bin/audit
+
+# uid 1000 + keep-id (like astro/claude) so report files written into the bind-mounted
+# app dir stay owned by YOU on the host.
+RUN useradd -u 1000 -m runner
+USER runner
+ENV HOME=/home/runner
+WORKDIR /website/app
+
+ENTRYPOINT ["/usr/local/bin/audit"]

@@ -23,7 +23,32 @@ services:
     volumes:
       - ./:/website:z
       - node_modules:/website/app/node_modules # shared with the claude service (below)
-
+  # --- Lighthouse runner (Asahi / 16 KB pages) --------------------------------------
+  # Separate Fedora image: Debian's chromium SIGTRAPs on this 16 KB-page M1 host; Fedora's
+  # aarch64 chromium doesn't. Purely for running Lighthouse against the dev server.
+  #
+  #   podman compose --profile audit build lighthouse   # build (runs the 16 KB smoke test)
+  #   podman compose up -d astro                          # dev server must be up
+  #   podman compose run --rm lighthouse http://astro:4321 \
+  #       --output html --output-path /website/app/lighthouse-report.html
+  #   # -> report lands at ./app/lighthouse-report.html, owned by you
+  lighthouse:
+    profiles: ["audit"]
+    build:
+      context: .
+      dockerfile: Containerfile.lighthouse
+      shm_size: "1gb"          # chromium needs a real /dev/shm at BUILD (smoke test) too
+    image: localhost/website-lighthouse:latest
+    init: true
+    security_opt: ["seccomp=unconfined"]   # chromium in a container, same as `claude`
+    shm_size: "1gb"                          # ...and at runtime
+    user: "1000"
+    userns_mode: "keep-id"                   # report files stay owned by you
+    working_dir: /website/app
+    environment:
+      HOME: /home/runner
+    volumes:
+      - ./app:/website/app:z   # only so the HTML report can be written back to the host
   # Claude Code sandbox — same image as astro, so Claude gets the exact Astro + chromium
   # toolchain and can run the app's own build / Lighthouse. No separate build: it reuses
   # astro's image tag, so BUILD ASTRO FIRST:

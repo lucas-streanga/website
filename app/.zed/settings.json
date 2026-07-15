@@ -22,6 +22,18 @@
           "workspaceDictPath": ".harper-dictionary.txt"
         }
       }
+    },
+    // NOTE: the current Zed astro extension IGNORES this — it resolves TypeScript from
+    // its OWN work dir (~/.local/share/zed/extensions/work/astro/node_modules) and never
+    // reads typescript.tsdk. The fix that actually works is the symlink added to
+    // sync_astro_editor.sh, which points that work dir at our synced app/node_modules/
+    // typescript. Kept here only in case a future extension version honors tsdk (harmless).
+    "astro-language-server": {
+      "initialization_options": {
+        "typescript": {
+          "tsdk": "/home/lucas/projects/website/app/node_modules/typescript/lib"
+        }
+      }
     }
   }
 }

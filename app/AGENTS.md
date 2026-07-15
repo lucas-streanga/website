@@ -62,6 +62,36 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Running Lighthouse (performance audits)
+
+This is a **host/human task, not an agent one.** Lighthouse needs Chromium, and the
+`claude` sandbox is Debian — its chromium is built for 4 KB pages and SIGTRAPs on this M1's
+16 KB-page kernel (Debian bug #1089647), so **an agent cannot run Lighthouse from its own
+container.** It lives in a separate Fedora image (the `lighthouse` service under the `audit`
+profile), whose aarch64 chromium is 16 KB-safe. Run it yourself:
+
+```
+podman compose --profile audit build lighthouse   # one-time; runs a 16 KB smoke test
+podman compose up -d astro                          # dev server must be up first
+podman compose run --rm lighthouse http://astro:4321 \
+    --output html --output-path /website/app/lighthouse-report.html
+# report -> ./app/lighthouse-report.html (owned by you)
+```
+
+- Reach the dev server by **service name** (`http://astro:4321`), not `localhost` — the two
+  containers share the compose network. Start `astro` first (no `depends_on`, so it won't
+  wait for a cold server).
+- For realistic numbers, audit a **prod build** (dev has HMR overhead): run
+  `astro build && astro preview --host 0.0.0.0` in the astro container and point the runner
+  at that URL instead.
+- Rationale/how: see `Containerfile.lighthouse` and the `lighthouse` service in `compose.yaml`.
+
+**Agents:** don't attempt this in your sandbox (broken chromium, and no container runtime
+inside) — ask the human to run it, or hand them the command above. *(Exception: if the host's
+rootless podman socket has been mounted here and `CONTAINER_HOST` is set, you can launch the
+sibling container yourself — `podman --remote run … localhost/website-lighthouse … --output=json
+--output-path=stdout` — and read the JSON scores back from stdout.)*
+
 ## Documentation
 
 Full documentation: https://docs.astro.build
