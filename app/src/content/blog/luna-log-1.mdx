@@ -9,6 +9,7 @@ coverCaption: "Picture unrelated, I just like it. Courtesy of [The Pit Stop](htt
 ---
 
 import LunaCode from "../../components/LunaCode.astro";
+import Link from "../../components/Link.astro";
 
 ## Luna: What is it?
 
@@ -155,6 +156,6 @@ So, we require that a function declares it can throw. And then, we employ - gasp
 
 ## Where's Luna Now?
 
-Luna is still in its very earliest infancy, and the spec is being refined. The spec and eventual implementation can be viewed at [the Luna GitHub Repo](https://github.com/lucas-streanga/luna/tree/master). 
+Luna is still in its very earliest infancy, and the spec is being refined. The spec and eventual implementation can be viewed at <Link href="https://github.com/lucas-streanga/luna/tree/master">the Luna GitHub Repo</Link>.
 Once I'm happy with the specification, I'll begin with an initial tree-walking interpreter implementation, which will serve as an oracle and the backbone of Test Driven Development for the compiler.
 The production compiler will be written in Go.
