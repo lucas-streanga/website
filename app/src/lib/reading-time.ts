@@ -1,7 +1,7 @@
 const WORDS_PER_MINUTE = 200;
 
 // Estimate reading time (whole minutes, min 1) from a post's raw Markdown/MDX
-// body. Code blocks, inline code, MDX imports and tags are stripped first —
+// body. Code blocks, inline code, MDX imports and tags are stripped first,
 // they're not prose, and a code-heavy dev post would otherwise over-count.
 export function readingTime(body: string | undefined): number {
     const prose = (body ?? "")

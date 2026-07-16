@@ -108,7 +108,7 @@ try {
         background-repeat: no-repeat;
     }
     /* Fill and cover the wrapper so the decoded photo hides the blur underneath.
-     Default is fully visible — so a no-JS visitor and any already-loaded (cached)
+     Default is fully visible, so a no-JS visitor and any already-loaded (cached)
      image show instantly with no fade. */
     .blur-image :global(img) {
         display: block;
@@ -118,7 +118,7 @@ try {
         transition: opacity 0.5s ease;
     }
     /* Script adds .is-loading only while the image is pending, then .is-loaded
-     on load — cross-fading it in over the blur. */
+     on load, cross-fading it in over the blur. */
     .blur-image.is-loading :global(img) {
         opacity: 0;
     }

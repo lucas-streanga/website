@@ -1,6 +1,6 @@
 import type { CollectionEntry } from "astro:content";
 
-// Single source of truth for the site owner's identity — used by the Person
+// Single source of truth for the site owner's identity, used by the Person
 // schema (home) and as the author of every BlogPosting. Keep the social URLs in
 // sync with the footer.
 const AUTHOR = {

@@ -9,7 +9,7 @@ export async function GET(context: APIContext) {
         (a, b) => b.data.date.getTime() - a.data.date.getTime(),
     );
     return rss({
-        title: "streanga.com — Blog",
+        title: "streanga.com · Blog",
         description: "Notes on building things, by Lucas.",
         site: context.site!,
         items: posts.map((post) => ({

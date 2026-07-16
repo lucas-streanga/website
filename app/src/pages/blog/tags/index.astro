@@ -1,5 +1,5 @@
 ---
-// /blog/tags — browse every tag, with post counts.
+// /blog/tags: browse every tag, with post counts.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import { tagSlug } from "../../../lib/tags";
@@ -17,7 +17,7 @@ const tags = [...counts.entries()].sort(
 );
 ---
 
-<BaseLayout title="Tags — streanga.com" description="Browse blog posts by tag.">
+<BaseLayout title="Tags · streanga.com" description="Browse blog posts by tag.">
     <main id="main" class="container tags-index">
         <header class="tags-head">
             <p class="eyebrow">Blog</p>

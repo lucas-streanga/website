@@ -2,7 +2,7 @@
  * Type declarations for importing .luna source files as strings via `?raw`.
  *
  * Vite (under Astro) already supports `?raw` at runtime; this file only makes
- * TypeScript agree. Must be on the tsconfig include path — place under `src/`
+ * TypeScript agree. Must be on the tsconfig include path, place under `src/`
  * beside `env.d.ts`, or add `"tooling/*.d.ts"` to `include`.
  *
  * Usage:

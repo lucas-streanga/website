@@ -33,7 +33,7 @@ const schema = blogPostingSchema(
 
 <!-- Per-post SEO: the cover doubles as the social share image. -->
 <BaseLayout
-    title={`${title} — streanga.com`}
+    title={`${title} · streanga.com`}
     description={description}
     image={cover.src}
     type="article"
@@ -228,7 +228,7 @@ const schema = blogPostingSchema(
         text-align: left;
         vertical-align: top;
     }
-    /* Header strip — same sunken tone as the code block's title bar. */
+    /* Header strip: same sunken tone as the code block's title bar. */
     .prose :global(.table-wrap thead th) {
         background: var(--color-surface-sunken);
         font-weight: 600;

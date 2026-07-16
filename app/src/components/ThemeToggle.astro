@@ -98,7 +98,7 @@
         return mql.matches ? "dark" : "light";
     }
 
-    // Update only the button's accessible state — no storage writes.
+    // Update only the button's accessible state, no storage writes.
     function syncButton(theme: string) {
         const dark = theme === "dark";
         toggle?.setAttribute(
@@ -109,7 +109,7 @@
     }
 
     // Pin an explicit choice (only from a real click). Also sets inline
-    // color-scheme to match the head script — otherwise a stale inline value
+    // color-scheme to match the head script, otherwise a stale inline value
     // would override the CSS on the next toggle.
     function setTheme(theme: string) {
         root.dataset.theme = theme;

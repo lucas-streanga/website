@@ -33,7 +33,7 @@ export default defineConfig({
   // Astro 7's default processor is Sätteri; our remark/rehype plugins run on the
   // legacy `unified` processor, so we select it explicitly. (The deprecated
   // markdown.remarkPlugins/rehypePlugins fields forced this same processor
-  // implicitly — this is behavior-preserving, just without the deprecation warning.)
+  // implicitly, this is behavior-preserving, just without the deprecation warning.)
   markdown: {
     processor: unified({
       // Rewrite ```luna fences into <LunaCode> before Shiki runs (see the plugin).
@@ -52,7 +52,7 @@ export default defineConfig({
     strictPort: true, // fail loudly instead of drifting to 4322
   },
 
-  // Inline all CSS into each page so it's present at first paint — no external,
+  // Inline all CSS into each page so it's present at first paint, no external,
   // render-blocking stylesheet that a cold load would paint ahead of, causing a
   // flash of unstyled content (and blur-up placeholder tiling) before it lands.
   build: {
@@ -68,7 +68,7 @@ export default defineConfig({
     // Keep bundled component scripts EXTERNAL. Reason (load-bearing, do NOT
     // remove): Astro's view-transition router re-runs external module scripts by
     // their src URL, but re-runs INLINE module scripts by injecting a
-    // `data:application/javascript` script — which the CSP blocks (allowing
+    // `data:application/javascript` script, which the CSP blocks (allowing
     // `data:` in script-src would be an XSS hole). Externalizing also lets
     // `script-src 'self'` cover them, so the CSP needs only the two is:inline
     // hashes. (CSS is inlined separately via build.inlineStylesheets above.)
@@ -93,7 +93,7 @@ export default defineConfig({
       weights: ["100 900"], // variable range
       // optional (not swap): with the font preloaded it renders from first paint,
       // and otherwise sticks with the fallback for that load rather than swapping
-      // mid-page — so no font-driven reflow (e.g. the email link).
+      // mid-page, so no font-driven reflow (e.g. the email link).
       display: "optional",
     },
     {

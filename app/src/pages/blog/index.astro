@@ -1,5 +1,5 @@
 ---
-// /blog — the post index, newest first, as cards.
+// /blog: the post index, newest first, as cards.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
 import { getCollection } from "astro:content";
@@ -10,7 +10,7 @@ const posts = (await getCollection("blog")).sort(
 ---
 
 <BaseLayout
-    title="Blog — streanga.com"
+    title="Blog · streanga.com"
     description="Writing by Lucas on building things."
 >
     <main id="main" class="container blog-index">

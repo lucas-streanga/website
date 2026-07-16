@@ -1,6 +1,6 @@
 ---
 // One page per tag, listing its posts. `params.tag` is the slug; `props.tag` is
-// the original display text — both come from tagSlug() so links always match.
+// the original display text, both come from tagSlug() so links always match.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PostCard from "../../../components/PostCard.astro";
 import { getCollection } from "astro:content";
@@ -29,7 +29,7 @@ const { tag, posts } = Astro.props;
 ---
 
 <BaseLayout
-    title={`Posts tagged “${tag}” — streanga.com`}
+    title={`Posts tagged “${tag}” · streanga.com`}
     description={`Blog posts tagged ${tag}.`}
 >
     <main id="main" class="container tag-page">

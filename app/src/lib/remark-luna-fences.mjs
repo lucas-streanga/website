@@ -1,5 +1,5 @@
 /**
- * remark-luna-fences — render ```luna fenced code blocks with <LunaCode>.
+ * remark-luna-fences: render ```luna fenced code blocks with <LunaCode>.
  *
  * Rewrites every ```luna block into <LunaCode code={...} />, so an author writes
  * a plain fence and gets the framed, syntax-highlighted card (caption + copy
@@ -10,7 +10,7 @@
  *   2. the page rendering the post provides the component to MDX:
  *        <Content components={{ LunaCode }} />
  *      MDX resolves the injected <LunaCode> from that map, so posts need no
- *      per-file `import`. (A post that DOES import LunaCode still works — the
+ *      per-file `import`. (A post that DOES import LunaCode still works, the
  *      local import simply shadows the provided one.)
  *
  * MDX only: the injected node is an mdxJsxFlowElement, which the plain-Markdown
