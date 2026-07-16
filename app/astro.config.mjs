@@ -1,7 +1,9 @@
 import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
 import { unified } from "@astrojs/markdown-remark";
 import remarkLunaFences from "./src/lib/remark-luna-fences.mjs";
+import cspHeaders from "./csp-headers.mjs";
 
 // Wrap every GFM table in <div class="table-wrap"> so wide tables can scroll on
 // narrow screens and take the same card frame as code blocks (see PostLayout).
@@ -56,9 +58,23 @@ export default defineConfig({
         usePolling: true, // reliable hot reload across a container bind mount
       },
     },
+    // Emit bundled component scripts as external files (not inlined into the
+    // HTML) so a hash-based CSP can cover them with `script-src 'self'` instead
+    // of a brittle per-bundle hash that changes on every edit. Only the two
+    // hand-written `is:inline` scripts then need hashes.
+    build: {
+      assetsInlineLimit: 0,
+    },
   },
 
-  integrations: [mdx()],
+  integrations: [
+    mdx(),
+    // Keep the form thank-you page out of search results.
+    sitemap({ filter: (page) => !page.includes("/contact/thanks") }),
+    // Generates dist/_headers (CSP + security headers) with inline-script
+    // hashes computed from the built HTML. See csp-headers.mjs.
+    cspHeaders(),
+  ],
   fonts: [
     {
       provider: fontProviders.fontsource(),

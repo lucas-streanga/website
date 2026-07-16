@@ -3,6 +3,7 @@ import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import { Font } from "astro:assets";
 import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
 interface Props {
     title?: string;
     description?: string;
@@ -28,6 +29,17 @@ const SITE_NAME = "streanga.com";
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- Mobile browser-chrome color per OS scheme (matches --bg-light/dark). -->
+        <meta
+            name="theme-color"
+            media="(prefers-color-scheme: light)"
+            content="#d2e3d5"
+        />
+        <meta
+            name="theme-color"
+            media="(prefers-color-scheme: dark)"
+            content="#2b211a"
+        />
         <Font cssVariable="--font-inter" preload />
         <Font cssVariable="--font-literata" preload />
         <!-- Inline so it runs before first paint (no flash). Only an EXPLICIT
@@ -65,6 +77,12 @@ const SITE_NAME = "streanga.com";
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="streanga.com — Blog"
+            href="/rss.xml"
+        />
         <!-- Favicons: the SVG covers modern browsers; add PNG/ICO to /public for broader coverage. -->
         <!-- ?v=2 busts browsers' aggressive favicon cache; bump it whenever the icon art changes. -->
         <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
@@ -90,5 +108,6 @@ const SITE_NAME = "streanga.com";
         <a href="#main" class="sr-only">Skip to content</a>
         <Navbar />
         <slot />
+        <Footer />
     </body>
 </html>
