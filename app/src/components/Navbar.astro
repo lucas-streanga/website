@@ -7,6 +7,7 @@ import ThemeToggle from "../components/ThemeToggle.astro";
         <a href="/" class="brand">streanga.com</a>
         <nav class="nav-links" aria-label="Primary">
             <a href="/">Home</a>
+            <a href="/about">About</a>
             <a href="/blog">Blog</a>
             <ThemeToggle />
         </nav>
@@ -36,7 +37,9 @@ import ThemeToggle from "../components/ThemeToggle.astro";
     .nav-links {
         display: flex;
         align-items: center;
-        gap: var(--space-6);
+        /* Fluid so three links + the toggle still fit next to the brand on
+           narrow phones (no hamburger). */
+        gap: clamp(var(--space-3), 2.5vw, var(--space-6));
         flex-shrink: 0;
     }
     .nav-links a {
