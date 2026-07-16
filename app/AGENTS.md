@@ -54,7 +54,8 @@ Where to make common changes:
 
 ## Code style
 
-- **Comments explain _why_, not _what_.** The code already shows what it does; a comment earns its place only by capturing what the code can't — a non-obvious constraint, a gotcha, a cross-file contract, a rejected alternative. Prefer one dense line of rationale over a paragraph restating the form of the code. If a comment could be deleted without losing intent a reader couldn't recover from the code itself, delete it.
+- **Comments explain _why_, not _what_.** The code already shows what it does; a comment earns its place only by capturing what the code can't: a non-obvious constraint, a gotcha, a cross-file contract, a rejected alternative. Prefer one dense line of rationale over a paragraph restating the form of the code. If a comment could be deleted without losing intent a reader couldn't recover from the code itself, delete it.
+- **No em-dashes (`—`), ever.** Everywhere: prose, UI copy, blog posts, and code comments. Reach for a comma, colon, parentheses, or a period instead. (An en-dash `–` in a numeric range like `2019–2022` is a different character and is fine.)
 
 ## Development
 

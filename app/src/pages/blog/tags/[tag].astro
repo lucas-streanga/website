@@ -1,0 +1,87 @@
+---
+// One page per tag, listing its posts. `params.tag` is the slug; `props.tag` is
+// the original display text, both come from tagSlug() so links always match.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { getCollection } from "astro:content";
+import { tagSlug } from "../../../lib/tags";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("blog");
+    const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+    return tags.map((tag) => ({
+        params: { tag: tagSlug(tag) },
+        props: {
+            tag,
+            posts: posts
+                .filter((p) => p.data.tags.includes(tag))
+                .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+        },
+    }));
+}
+
+interface Props {
+    tag: string;
+    posts: CollectionEntry<"blog">[];
+}
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout
+    title={`Posts tagged “${tag}” · streanga.com`}
+    description={`Blog posts tagged ${tag}.`}
+>
+    <main id="main" class="container tag-page">
+        <header class="tag-head">
+            <p class="eyebrow">Tag</p>
+            <h1>{tag}</h1>
+            <p class="lead">
+                {posts.length} post{posts.length === 1 ? "" : "s"}. <a
+                    href="/blog/tags">All tags →</a
+                >
+            </p>
+        </header>
+
+        <ul class="card-grid">
+            {posts.map((post) => <PostCard post={post} />)}
+        </ul>
+    </main>
+</BaseLayout>
+
+<style>
+    .tag-page {
+        padding-block: var(--space-12) var(--space-24);
+    }
+    .tag-head {
+        margin-block-end: var(--space-12);
+    }
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--color-accent);
+        margin-block-end: var(--space-4);
+    }
+    .tag-head h1 {
+        font-size: var(--text-4xl);
+    }
+    .lead {
+        margin-block-start: var(--space-3);
+        color: var(--color-text-muted);
+        font-size: var(--text-lg);
+    }
+    .lead a {
+        color: var(--color-accent);
+        white-space: nowrap;
+    }
+
+    .card-grid {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: var(--space-8);
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    }
+</style>

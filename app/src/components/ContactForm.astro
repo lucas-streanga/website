@@ -104,7 +104,7 @@ const MAX_MESSAGE = 1024;
             aria-live="polite"
             hidden
         >
-            <h3>Thanks — your message is on its way.</h3>
+            <h3>Thanks, your message is on its way.</h3>
             <p>I read every message and will reply to the email you gave me.</p>
         </div>
     </div>
@@ -204,7 +204,7 @@ const MAX_MESSAGE = 1024;
         justify-content: space-between;
         gap: var(--space-4);
     }
-    /* On the label row (empty until JS fills it) so appearing adds no height —
+    /* On the label row (empty until JS fills it) so appearing adds no height,
        otherwise it shoves the Send button down on load (a layout shift). */
     .counter {
         font-size: var(--text-sm);
@@ -237,7 +237,7 @@ const MAX_MESSAGE = 1024;
         color: var(--color-text-muted);
     }
 
-    /* Off-screen, not display:none — some bots skip hidden fields but fill positioned ones. */
+    /* Off-screen, not display:none, some bots skip hidden fields but fill positioned ones. */
     .hp {
         position: absolute;
         left: -9999px;
@@ -292,7 +292,7 @@ const MAX_MESSAGE = 1024;
         };
 
         form.addEventListener("submit", async (event) => {
-            // Native validation already passed — submit doesn't fire otherwise.
+            // Native validation already passed, submit doesn't fire otherwise.
             event.preventDefault();
             if (!submit) return;
 

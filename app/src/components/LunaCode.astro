@@ -1,6 +1,6 @@
 ---
 /**
- * <LunaCode> — render Luna source with syntax highlighting, anywhere in .astro or .mdx.
+ * <LunaCode>: render Luna source with syntax highlighting, anywhere in .astro or .mdx.
  *
  * Setup: `npm i -D shiki` (types for the grammar module; Astro ships the runtime).
  *
@@ -8,7 +8,7 @@
  *
  *   <LunaCode name="a-taste-of-luna" />
  *
- * `name` resolves to /src/assets/snippets/<name>.luna via an eager `?raw` glob —
+ * `name` resolves to /src/assets/snippets/<name>.luna via an eager `?raw` glob,
  * root-absolute, so it works from any page depth regardless of where this component
  * lives. Title defaults to the filename; override with `title`. A missing name fails
  * the build with the available names listed. Explicit code still works for one-offs:
@@ -20,7 +20,7 @@
  * Notes:
  * - Plain ```luna fences in .md/.mdx are the OTHER path: they need the grammar
  *   registered once in astro.config (see shiki-luna.ts). This component is
- *   self-contained instead — Astro's <Code> accepts the grammar object directly as
+ *   self-contained instead, Astro's <Code> accepts the grammar object directly as
  *   `lang`, so it works with zero config for code arriving as a prop.
  * - Theming: the frame reads CSS custom properties with quiet defaults, so the
  *   site's theme can restyle it without touching this file.

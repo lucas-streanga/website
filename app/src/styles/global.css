@@ -35,10 +35,10 @@
     --color-border: light-dark(var(--line-light), var(--line-dark));
 
     /* Code block: a dark "embedded terminal" in BOTH modes, running everforest-
-       dark tokens (light pastels) — that's what keeps the syntax hues identical
+       dark tokens (light pastels), that's what keeps the syntax hues identical
        on toggle. Only the dark BACKDROP hue follows the page: pine-green in light
        (sits with the mint page), warm brown in dark (matches it). The hue swap is
-       free because contrast is luminance-based — both backdrops are ~L0.03, so
+       free because contrast is luminance-based, both backdrops are ~L0.03, so
        everforest-dark clears AA on each (keywords ~4.5-4.6:1, strings ~6.9). A
        genuinely light card is impossible here: everforest's pastels collapse to
        ~1.5:1 on any light bg, and no readable light theme shares its hue map.

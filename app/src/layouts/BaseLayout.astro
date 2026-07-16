@@ -7,18 +7,18 @@ import Footer from "../components/Footer.astro";
 interface Props {
     title?: string;
     description?: string;
-    image?: string; // og:image — relative path or absolute URL; override per post
-    type?: "website" | "article"; // og:type — "article" for blog posts
+    image?: string; // og:image: relative path or absolute URL; override per post
+    type?: "website" | "article"; // og:type: "article" for blog posts
 }
 const {
     title = "streanga.com",
-    description = "Personal site of Lucas — developer & writer.",
+    description = "Personal site of Lucas, developer & writer.",
     image = "/og-default.png",
     type = "website",
 } = Astro.props;
 // Absolute URLs for canonical + social tags (requires `site` in astro.config.mjs).
 // new URL(x, base): relative paths resolve against the site, absolute URLs pass
-// through unchanged — so per-post overrides can be either.
+// through unchanged, so per-post overrides can be either.
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(image, Astro.site);
 const SITE_NAME = "streanga.com";
@@ -80,7 +80,7 @@ const SITE_NAME = "streanga.com";
         <link
             rel="alternate"
             type="application/rss+xml"
-            title="streanga.com — Blog"
+            title="streanga.com · Blog"
             href="/rss.xml"
         />
         <!-- Favicons: the SVG covers modern browsers; add PNG/ICO to /public for broader coverage. -->

@@ -1,0 +1,93 @@
+---
+// Blog post card, shared by the /blog index and the tag pages. Tags sit OUTSIDE
+// the card's main <a> (an <a> can't nest inside another) so they can be their
+// own links to tag pages.
+import BlurImage from "./BlurImage.astro";
+import TagList from "./TagList.astro";
+import { readingTime } from "../lib/reading-time";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+    post: CollectionEntry<"blog">;
+}
+const { post } = Astro.props;
+const { title, description, cover, coverAlt, date, tags } = post.data;
+
+const dateStr = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+});
+const minutes = readingTime(post.body);
+---
+
+<li class="card">
+    <a href={`/blog/${post.id}`} class="card-link">
+        <BlurImage
+            src={cover}
+            alt={coverAlt || title}
+            sizes="(max-width: 48rem) 92vw, 22rem"
+            class="card-cover"
+        />
+        <div class="card-body">
+            <p class="card-meta">
+                <time datetime={date.toISOString()}>{dateStr}</time>
+                <span aria-hidden="true"> · </span>
+                {minutes} min read
+            </p>
+            <h2 class="card-title">{title}</h2>
+            <p class="card-desc">{description}</p>
+        </div>
+    </a>
+    {
+        tags.length > 0 && (
+            <div class="card-tags">
+                <TagList tags={tags} />
+            </div>
+        )
+    }
+</li>
+
+<style>
+    .card {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition:
+            transform 0.15s ease,
+            border-color 0.15s ease;
+    }
+    .card:hover {
+        transform: translateY(-3px);
+        border-color: var(--color-brand);
+    }
+    .card-link {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+    }
+    .card-cover {
+        display: block;
+        inline-size: 100%;
+        aspect-ratio: 16 / 9;
+    }
+    .card-body {
+        padding: var(--space-6) var(--space-6) var(--space-4);
+    }
+    .card-meta {
+        color: var(--color-text-muted);
+        font-size: var(--text-sm);
+    }
+    .card-title {
+        font-size: var(--text-lg);
+        margin-block: var(--space-2);
+    }
+    .card-desc {
+        color: var(--color-text-muted);
+        font-size: var(--text-base);
+    }
+    .card-tags {
+        padding: 0 var(--space-6) var(--space-6);
+    }
+</style>

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * sync-luna-grammar.mjs — lives in the astro repo at scripts/.
+ * sync-luna-grammar.mjs: lives in the astro repo at scripts/.
  *
  * Syncs src/lib/shiki-luna.ts from the luna repo so this site never forks the
- * grammar. Pure Node (built-in fetch, Node >= 18) — no git, no curl, since both
+ * grammar. Pure Node (built-in fetch, Node >= 18), no git, no curl, since both
  * are absent from node:22-slim; runs identically in the container, on Linux, and
  * on Apple-silicon podman.
  *
@@ -58,7 +58,7 @@ try {
 
     const stamped =
         `// GENERATED: synced from ${OWNER_REPO} (${FILE} @ ${rev})\n` +
-        `// by scripts/sync-luna-grammar.mjs — edit in the luna repo, never here.\n` +
+        `// by scripts/sync-luna-grammar.mjs, edit in the luna repo, never here.\n` +
         body;
 
     mkdirSync(dirname(DEST), { recursive: true });
@@ -79,12 +79,12 @@ try {
 } catch (err) {
     if (existsSync(DEST)) {
         console.warn(
-            `sync-luna-grammar: WARNING — could not reach ${OWNER_REPO} ` +
+            `sync-luna-grammar: WARNING: could not reach ${OWNER_REPO} ` +
                 `(${err.message}); keeping existing ${DEST}`,
         );
     } else {
         console.error(
-            `sync-luna-grammar: ERROR — could not reach ${OWNER_REPO} ` +
+            `sync-luna-grammar: ERROR: could not reach ${OWNER_REPO} ` +
                 `(${err.message}) and no existing ${DEST} exists`,
         );
         process.exit(1);

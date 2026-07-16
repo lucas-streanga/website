@@ -5,12 +5,24 @@ import BlurImage from "../components/BlurImage.astro";
 import ContactForm from "../components/ContactForm.astro";
 import JsonLd from "../components/JsonLd.astro";
 import { personSchema } from "../lib/structured-data";
+import { readingTime } from "../lib/reading-time";
+import { getCollection } from "astro:content";
 import me from "../assets/me.jpg";
 
 const person = personSchema(new URL(me.src, Astro.site).href);
+
+const latest = (await getCollection("blog")).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+)[0];
+const latestDate = latest.data.date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+});
+const latestMinutes = readingTime(latest.body);
 ---
 
-<BaseLayout title="Lucas — Home" description="Personal site of Lucas.">
+<BaseLayout title="Lucas · Home" description="Personal site of Lucas.">
     <JsonLd schema={person} />
     <main id="main">
         <section class="hero">
@@ -19,14 +31,15 @@ const person = personSchema(new URL(me.src, Astro.site).href);
                     <p class="eyebrow">Developer</p>
                     <h1 class="hero-title">Hi, I'm Lucas.</h1>
                     <p class="hero-lead">
-                        Hello! I'm a web developer. I like to experiment with
-                        new technologies and build cool things!
+                        I'm a software engineer at Paycom who loves everything
+                        about computers and software. I'm especially tickled by
+                        programming languages, from their design to their
+                        implementation.
                     </p>
                     <div class="actions">
                         <a href="/blog" class="btn btn-primary">Read the blog</a
                         >
-                        <a href="#contact" class="btn btn-ghost">Get in touch</a
-                        >
+                        <a href="/about" class="btn btn-ghost">More about me</a>
                     </div>
                 </div>
 
@@ -42,6 +55,36 @@ const person = personSchema(new URL(me.src, Astro.site).href);
                         class="photo"
                     />
                 </div>
+            </div>
+        </section>
+
+        <section class="latest">
+            <div class="container">
+                <div class="latest-head">
+                    <h2>Latest post</h2>
+                    <a href="/blog" class="all-link">All posts →</a>
+                </div>
+
+                <a href={`/blog/${latest.id}`} class="feature">
+                    <BlurImage
+                        src={latest.data.cover}
+                        alt={latest.data.coverAlt || latest.data.title}
+                        sizes="(max-width: 48rem) 92vw, 20rem"
+                        class="feature-cover"
+                    />
+                    <div class="feature-body">
+                        <p class="feature-meta">
+                            <time datetime={latest.data.date.toISOString()}
+                                >{latestDate}</time
+                            >
+                            <span aria-hidden="true"> · </span>
+                            {latestMinutes} min read
+                        </p>
+                        <h3 class="feature-title">{latest.data.title}</h3>
+                        <p class="feature-desc">{latest.data.description}</p>
+                        <span class="feature-more">Read the post →</span>
+                    </div>
+                </a>
             </div>
         </section>
 
@@ -116,6 +159,70 @@ const person = personSchema(new URL(me.src, Astro.site).href);
         margin-inline: auto;
     }
 
+    /* --- Latest post --- */
+    .latest {
+        padding-block-end: clamp(var(--space-16), 8vw, var(--space-24));
+    }
+    .latest-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--space-4);
+        margin-block-end: var(--space-6);
+    }
+    .latest-head h2 {
+        font-size: var(--text-2xl);
+    }
+    .all-link {
+        color: var(--color-accent);
+        font-size: var(--text-sm);
+        white-space: nowrap;
+    }
+
+    .feature {
+        display: grid;
+        grid-template-columns: minmax(0, 20rem) 1fr;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        transition:
+            border-color 0.15s ease,
+            transform 0.15s ease;
+    }
+    .feature:hover {
+        border-color: var(--color-brand);
+        transform: translateY(-3px);
+    }
+    /* Cover fills its column; card height is driven by the body (min 13rem). */
+    .feature-cover {
+        block-size: 100%;
+        min-block-size: 13rem;
+    }
+    .feature-body {
+        padding: var(--space-8);
+    }
+    .feature-meta {
+        color: var(--color-text-muted);
+        font-size: var(--text-sm);
+    }
+    .feature-title {
+        font-size: var(--text-2xl);
+        margin-block: var(--space-2) var(--space-3);
+    }
+    .feature-desc {
+        color: var(--color-text-muted);
+    }
+    .feature-more {
+        display: inline-block;
+        margin-block-start: var(--space-4);
+        color: var(--color-accent);
+        font-weight: 600;
+        font-size: var(--text-sm);
+    }
+
     /* Stack on narrow screens; photo first so it doesn't get pushed off-screen. */
     @media (max-width: 48rem) {
         .hero-grid {
@@ -126,6 +233,14 @@ const person = personSchema(new URL(me.src, Astro.site).href);
         }
         .photo {
             max-inline-size: 220px;
+        }
+        .feature {
+            grid-template-columns: 1fr;
+        }
+        .feature-cover {
+            block-size: auto;
+            min-block-size: 0;
+            aspect-ratio: 16 / 9;
         }
     }
 </style>

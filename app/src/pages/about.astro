@@ -1,0 +1,200 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Link from "../components/Link.astro";
+
+// Curated highlight reel, not a full CV. Edit here, roles are my best guess at
+// titles; swap in the real ones.
+const timeline = [
+    { period: "2024 – Present", org: "Paycom", detail: "Software Developer" },
+    { period: "2023 – 2024", org: "ARGO Data", detail: "Software Developer" },
+    {
+        period: "2019 – 2022",
+        org: "University of Texas at Arlington",
+        detail: "B.S. Software Engineering",
+    },
+];
+---
+
+<BaseLayout
+    title="About · streanga.com"
+    description="A little about Lucas Streanga, software engineer, and what he's building."
+>
+    <main id="main" class="container about">
+        <section class="intro">
+            <p class="eyebrow">About</p>
+            <h1>Hey, I'm Lucas.</h1>
+            <div class="bio">
+                <p>
+                    I'm a software engineer at Paycom. I love everything about computers and software.
+                    I am especially tickled by programming languages, from their design
+                    to their implementation.
+                </p>
+                <p>
+                    This site is where I write about whatever is on my mind.
+                </p>
+            </div>
+        </section>
+
+        <section class="now">
+            <h2>What I'm working on</h2>
+            <p>
+                Most of my side-project energy goes into <strong>Luna</strong>, a
+                programming language I'm designing and building from scratch. It's my
+                playground for everything I find interesting about compilers,
+                type systems, and language ergonomics.
+            </p>
+            <p class="now-links">
+                <a href="/blog/luna-lang-introduction/"
+                    >Read the introduction →</a
+                >
+                <Link href="https://github.com/lucas-streanga/luna"
+                    >Luna on GitHub →</Link
+                >
+            </p>
+        </section>
+
+        <section class="history">
+            <h2>Timeline</h2>
+            <ol class="timeline">
+                {
+                    timeline.map((entry) => (
+                        <li class="timeline-item">
+                            <span class="timeline-dot" aria-hidden="true" />
+                            <div class="timeline-body">
+                                <p class="timeline-period">{entry.period}</p>
+                                <p class="timeline-org">{entry.org}</p>
+                                <p class="timeline-detail">{entry.detail}</p>
+                            </div>
+                        </li>
+                    ))
+                }
+            </ol>
+        </section>
+    </main>
+</BaseLayout>
+
+<style>
+    .about {
+        max-inline-size: 44rem;
+        padding-block: var(--space-12) var(--space-24);
+    }
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--color-accent);
+        margin-block-end: var(--space-4);
+    }
+    .intro h1 {
+        font-size: var(--text-4xl);
+    }
+    .bio {
+        margin-block-start: var(--space-6);
+    }
+    .bio p {
+        font-size: var(--text-lg);
+        color: var(--color-text-muted);
+        max-inline-size: 60ch;
+    }
+    .bio p + p {
+        margin-block-start: var(--space-4);
+    }
+
+    .now,
+    .history {
+        margin-block-start: var(--space-16);
+    }
+    h2 {
+        font-size: var(--text-2xl);
+        margin-block-end: var(--space-6);
+    }
+    .now p {
+        color: var(--color-text-muted);
+        max-inline-size: 60ch;
+    }
+    .now strong {
+        color: var(--color-text);
+    }
+    .now-links {
+        margin-block-start: var(--space-6);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-6);
+        font-size: var(--text-base);
+    }
+    .now-links a {
+        color: var(--color-accent);
+        white-space: nowrap;
+    }
+
+    /* --- Timeline --- */
+    .timeline {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .timeline-item {
+        position: relative;
+        padding-inline-start: var(--space-8);
+        padding-block-end: var(--space-8);
+    }
+    .timeline-item:last-child {
+        padding-block-end: 0;
+    }
+    /* The rail: a segment from each dot's center down to the next dot's. */
+    .timeline-item:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        left: calc(0.4rem - 1px);
+        top: 0.75rem;
+        bottom: -0.75rem;
+        width: 2px;
+        background: var(--color-border);
+    }
+    .timeline-dot {
+        position: absolute;
+        left: 0;
+        top: 0.35rem;
+        inline-size: 0.8rem;
+        block-size: 0.8rem;
+        border-radius: 999px;
+        background: var(--color-bg);
+        border: 2px solid var(--color-brand);
+    }
+    .timeline-period {
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--color-accent);
+    }
+    .timeline-org {
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        margin-block-start: 0.15rem;
+    }
+    .timeline-detail {
+        color: var(--color-text-muted);
+    }
+
+    /* Scroll-reveal: each entry fades + slides up as it scrolls into view. Pure
+       CSS, no JS. Gated behind @supports so browsers without scroll-driven
+       animations (e.g. Safari) just show the entries as normal, and skipped for
+       reduced-motion. */
+    @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+            .timeline-item {
+                opacity: 0;
+                transform: translateY(1.25rem);
+                animation: timeline-reveal linear both;
+                animation-timeline: view();
+                animation-range: entry 0% entry 50%;
+            }
+        }
+    }
+    @keyframes timeline-reveal {
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>

@@ -2,7 +2,9 @@
 import BaseLayout from "./BaseLayout.astro";
 import BlurImage from "../components/BlurImage.astro";
 import JsonLd from "../components/JsonLd.astro";
+import TagList from "../components/TagList.astro";
 import { blogPostingSchema } from "../lib/structured-data";
+import { readingTime } from "../lib/reading-time";
 import { inlineMarkdown } from "../lib/inlineMarkdown";
 import type { CollectionEntry } from "astro:content";
 
@@ -19,6 +21,7 @@ const formattedDate = date.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
 });
+const minutes = readingTime(post.body);
 
 // Auto-generated from frontmatter (+ resolved URLs), so it stays accurate.
 const schema = blogPostingSchema(
@@ -30,7 +33,7 @@ const schema = blogPostingSchema(
 
 <!-- Per-post SEO: the cover doubles as the social share image. -->
 <BaseLayout
-    title={`${title} — streanga.com`}
+    title={`${title} · streanga.com`}
     description={description}
     image={cover.src}
     type="article"
@@ -39,17 +42,17 @@ const schema = blogPostingSchema(
     <main id="main" class="container post">
         <article>
             <header class="post-header">
-                <p class="post-date">
+                <p class="post-meta">
                     <time datetime={date.toISOString()}>{formattedDate}</time>
+                    <span aria-hidden="true"> · </span>
+                    {minutes} min read
                 </p>
                 <h1 class="post-title">{title}</h1>
                 {
                     tags.length > 0 && (
-                        <ul class="tags">
-                            {tags.map((tag) => (
-                                <li class="tag">{tag}</li>
-                            ))}
-                        </ul>
+                        <div class="post-tags">
+                            <TagList tags={tags} />
+                        </div>
                     )
                 }
             </header>
@@ -87,7 +90,7 @@ const schema = blogPostingSchema(
     .post-header {
         margin-block-end: var(--space-8);
     }
-    .post-date {
+    .post-meta {
         color: var(--color-text-muted);
         font-size: var(--text-sm);
     }
@@ -95,21 +98,8 @@ const schema = blogPostingSchema(
         font-size: var(--text-4xl);
         margin-block-start: var(--space-2);
     }
-
-    .tags {
-        list-style: none;
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-2);
-        margin-block-start: var(--space-4);
-        padding: 0;
-    }
-    .tag {
-        font-size: var(--text-sm);
-        color: var(--color-accent-strong);
-        background-color: var(--color-surface-sunken);
-        padding: 0.15rem 0.6rem;
-        border-radius: 999px;
+    .post-tags {
+        margin-block-start: var(--space-6);
     }
 
     .post-cover {
@@ -238,7 +228,7 @@ const schema = blogPostingSchema(
         text-align: left;
         vertical-align: top;
     }
-    /* Header strip — same sunken tone as the code block's title bar. */
+    /* Header strip: same sunken tone as the code block's title bar. */
     .prose :global(.table-wrap thead th) {
         background: var(--color-surface-sunken);
         font-weight: 600;
