@@ -22,7 +22,12 @@ const MAX_MESSAGE = 1024;
     </div>
 
     <div class="form-card">
-        <form id="contact-form" class="form" method="POST" action="/api/contact">
+        <form
+            id="contact-form"
+            class="form"
+            method="POST"
+            action="/api/contact"
+        >
             <div class="field">
                 <label for="cf-email"
                     >Email <span class="req" aria-hidden="true">*</span></label
@@ -57,7 +62,8 @@ const MAX_MESSAGE = 1024;
                         >Message <span class="req" aria-hidden="true">*</span
                         ></label
                     >
-                    <span class="counter" data-counter aria-hidden="true"></span>
+                    <span class="counter" data-counter aria-hidden="true"
+                    ></span>
                 </div>
                 <textarea
                     id="cf-message"
@@ -68,7 +74,9 @@ const MAX_MESSAGE = 1024;
                     placeholder="What's on your mind?"></textarea>
             </div>
 
-            {/* Honeypot: hidden from humans + AT but still submitted; the server drops it if non-empty. */}
+            {
+                /* Honeypot: hidden from humans + AT but still submitted; the server drops it if non-empty. */
+            }
             <div class="hp" aria-hidden="true">
                 <label for="cf-website">Website</label>
                 <input

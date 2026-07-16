@@ -1,0 +1,15 @@
+dist
+.astro
+node_modules
+package-lock.json
+lighthouse-report.html
+.vscode
+.zed
+
+# Generated from the luna repo (see sync-luna-grammar.mjs) — never format here.
+src/lib/shiki-luna.ts
+
+# Authored prose/docs — format these deliberately, not on every save.
+AGENTS.md
+CLAUDE.md
+src/content

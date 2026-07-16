@@ -13,9 +13,9 @@
  * import: 'default', eager: true }) as Record<string, string>.
  */
 
-declare module '*.luna?raw' {
-  const source: string;
-  export default source;
+declare module "*.luna?raw" {
+    const source: string;
+    export default source;
 }
 
 // Deliberately no bare `*.luna` declaration: importing without `?raw` has no

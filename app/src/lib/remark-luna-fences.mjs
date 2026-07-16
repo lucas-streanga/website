@@ -51,7 +51,11 @@ function toLunaCode(node) {
     const match = node.meta && node.meta.match(TITLE);
     const title = match && (match[1] ?? match[2]);
     if (title) {
-        attributes.push({ type: "mdxJsxAttribute", name: "title", value: title });
+        attributes.push({
+            type: "mdxJsxAttribute",
+            name: "title",
+            value: title,
+        });
     }
     return {
         type: "mdxJsxFlowElement",
