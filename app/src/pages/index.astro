@@ -3,10 +3,15 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BlurImage from "../components/BlurImage.astro";
 import ContactForm from "../components/ContactForm.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { personSchema } from "../lib/structured-data";
 import me from "../assets/me.jpg";
+
+const person = personSchema(new URL(me.src, Astro.site).href);
 ---
 
 <BaseLayout title="Lucas — Home" description="Personal site of Lucas.">
+    <JsonLd schema={person} />
     <main id="main">
         <section class="hero">
             <div class="container hero-grid">
