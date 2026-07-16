@@ -11,4 +11,4 @@ const { schema } = Astro.props;
 const json = JSON.stringify(schema).replace(/</g, "\\u003c");
 ---
 
-<script type="application/ld+json" set:html={json} />
+<script type="application/ld+json" is:inline set:html={json} />

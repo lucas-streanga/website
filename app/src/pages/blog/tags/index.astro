@@ -1,0 +1,106 @@
+---
+// /blog/tags — browse every tag, with post counts.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { tagSlug } from "../../../lib/tags";
+
+const posts = await getCollection("blog");
+const counts = new Map<string, number>();
+for (const post of posts) {
+    for (const tag of post.data.tags) {
+        counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+}
+// Most-used first, then alphabetical.
+const tags = [...counts.entries()].sort(
+    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+);
+---
+
+<BaseLayout title="Tags — streanga.com" description="Browse blog posts by tag.">
+    <main id="main" class="container tags-index">
+        <header class="tags-head">
+            <p class="eyebrow">Blog</p>
+            <h1>Tags</h1>
+            <p class="lead">
+                Browse posts by topic. <a href="/blog">← All posts</a>
+            </p>
+        </header>
+
+        <ul class="cloud">
+            {
+                tags.map(([tag, count]) => (
+                    <li>
+                        <a href={`/blog/tags/${tagSlug(tag)}/`} class="chip">
+                            {tag}
+                            <span class="count">{count}</span>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </main>
+</BaseLayout>
+
+<style>
+    .tags-index {
+        padding-block: var(--space-12) var(--space-24);
+    }
+    .tags-head {
+        margin-block-end: var(--space-12);
+    }
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--color-accent);
+        margin-block-end: var(--space-4);
+    }
+    .tags-head h1 {
+        font-size: var(--text-4xl);
+    }
+    .lead {
+        margin-block-start: var(--space-3);
+        color: var(--color-text-muted);
+        font-size: var(--text-lg);
+    }
+    .lead a {
+        color: var(--color-accent);
+    }
+
+    .cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--text-base);
+        color: var(--color-text);
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        padding: var(--space-2) var(--space-4);
+        border-radius: 999px;
+        text-decoration: none;
+        transition:
+            border-color 0.15s ease,
+            transform 0.15s ease;
+    }
+    .chip:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-1px);
+    }
+    .count {
+        font-size: var(--text-sm);
+        color: var(--color-text-muted);
+        background-color: var(--color-surface-sunken);
+        border-radius: 999px;
+        padding: 0 0.5rem;
+    }
+</style>
