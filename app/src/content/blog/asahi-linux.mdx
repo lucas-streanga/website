@@ -1,0 +1,86 @@
+---
+title: "Asahi Linux: Truly Incredible"
+date: "2026-07-16"
+description: "Here I cover my experience with Asahi Linux on an M1 Pro MacBook Pro."
+tags: ["Asahi", "Linux", "Apple"]
+cover: ./asahi-linux-cover.png
+coverAlt: "The Asahi Linux logo and wordmark."
+coverCaption: "The Stunning [Asahi Linux logo](https://github.com/AsahiLinux/artwork), © soundflora* and Hector Martin, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)."
+---
+
+import Link from "../../components/Link.astro";
+
+## Preface
+
+Before I begin, I want to say that if you use Asahi Linux or just like what the team is doing, please consider donating <Link href="https://opencollective.com/asahilinux">here</Link>.
+I'm a strong believer that supporting open-source software is vital to its continuation. 
+
+## Asahi Linux Introduction
+
+When Apple came out with their custom silicon macs, it was a revolution. For the first time in decades, macs were everything they're not: fast, cool, and well-priced. But the hardware revolution was not free.
+This was the perfect opportunity for Apple to double-down on their software walled garden, and that they did. Without x86, there was nothing keeping macs open, other than Apple's good will. And, to be fair, they
+had some good will to spare, as Apple Silicon macs do in fact allow alternative operating systems. 
+
+But the real challenge would come later: reverse engineering. While Apple *technically* left the mac bootloader open, they did not provide hardly any tools to actually build alternative operating systems. And here
+enters the Asahi Linux team.
+
+## What is Asahi Linux?
+
+Asahi Linux is a custom linux distro intended to run on ARM64 Apple Silicon macs. It features a custom kernel with thousands of patches, as well patches to some userspace libs like Mesa. There is currently work underway to upstream many of the patches; for example, modern Mesa includes Asahi Linux patches, which means that, in the future, a custom package of Mesa will not be necessary to get hardware acceleration on Apple Silicon Macs. 
+
+The offical Asahi distro is based off of Fedora, which is a departure for me. So, I wanted to chronicle my experience using Asahi Linux on an M1 Pro Macbook Pro that my very good friend sold to me. And, spoiler alert: *it's been heaven*.
+
+## Why I Wanted Asahi
+
+I've been using Linux distros as my main desktop operating system for 12 years now, starting with Ubuntu 14.04. The last version of Windows I used seriously was Windows 8, not even 8.1. And... woof, that OS was rough. 
+
+There's a lot I love about Linux desktops, and it's been such a joy seeing them grow and improve over time. Some of my favorite projects, like KDE, have aged like fine wine. No, not that <Link href="https://www.winehq.org/">wine</Link>. It seems like, when software as a whole tends to be on the decline, Linux desktops just get better and better. Repeatedly I've thought "well KDE has everything", and then I'm proven wrong as new features that I come to use everyday are introduced. And I'll admit, in that time I have grown spoiled and stubborn. I have very little patience for learning other operating systems, because it always feels like a step back. There's always SOME annoyances, some weirdness, some performance pitfalls, that remind me that *they're not Linux*. At work I've been forced to use both Windows 10 and Windows 11 and... I hate it. Really, I do. I get surprised often by how difficult some simple actions should be. I get shocked at the frequent crashes (seriously, why does the taskbar kill itself a minimum of 3 times a day? And, why does it take down all my file explorer windows with it?). And, I get frustrated with the seemingly random slowdowns. 
+
+And, let's be frank here, Windows is just about the WORST operating system for developers. I use bash inside an emulator. Practically all our applications deploy exclusively to Linux. I mean, I have to run a container *inside* a Linux virtual machine just to get a working dev environment. It's janky, it's unpleasant, and it's dog slow. Have you ever had to resolve path inconsistencies in PHP class autoloaders between Windows and Linux? It sucks! And, it keeps happening! One little innocuous capital letter where it shouldn't be and oops! Now we have a whitescreen on our environments. 
+
+So, when the Apple Silicon macs came out, I watched from a distance. I made a pact: I would never become a mac person so long as MacOS continues to be a requirement. For me, it's Linux or bust. I followed Asahi from the beginning, waiting for the day it become stable enough and full-featured enough I could jump into the deep end. And that day has come.
+
+## My Experience
+
+Asahi Linux Fedora Remix, currently based off of Fedora 44, is basically perfect. Performance is amazing, battery life is good, and almost everything is supported. At least, on M1 and M2 based systems. The only missing pieces, really, are thunderbolt and touch ID. Touch ID I can live without, but thunderbolt would be nice. But, hardware acceleration is there, even for graphics. And the experience is really good.
+
+## The Best Parts
+
+The beauty of Linux, and open-source in general, is the platform support. When we compile everything from source, we have the freedom to easily support ARM, and as a result Linux on ARM is very normal. Honestly, it's rare I encounter a package that isn't packaged for ARM. So, I get to use all my favorite software - KDE, Thunderbird, Firefox, Steam - as if nothing changed. And Steam is for real, guys. All the games I've tried just work. MacOS can't do that. 
+
+And man oh man, you can tell these macbooks are something else because Linux just *flies*. Applications open instantly, bootup is a blink, suspend/resume is nimble. I tried MacOS for a bit, to see what all the fuss is about, and even on an M1 pro it's quite slow. It didn't feel too slow at the time, expect for some things (why do the boot options take an entire minute to load?). But when I switched to Linux, the performance differential was eye-watering.
+
+And, let me just circle back to Steam real quick. We're told Macs are not gaming machines, but here I am running all the games I want with zero headache. Why aren't more people talking about this? I just turned a Mac, a *Mac*, into a gaming laptop. The progress here can't be understated, and it goes back decades to Wine, and then Proton, DXVK and others. The work Valve and the broader open-source community has put in here has come home to roost, and we're all benefiting from it. 
+
+## The Bad Parts: Configuration
+
+If you haven't gathered already, I'm very picky about software. I like things to work the way I like, and I will make it happen. Some of the default configuration in Asahi is... not to my taste. That's not to say it's *bad*, just not for me. It's clear some of it is intended to be beginner-friendly, but, to me, it just ends up creating impediments.
+
+Exhibit A: no Grub menu by default. That's strange. I understand Grub can look scary, but when my computer won't boot for whatever reason, including random hardware breakage that can just happen, I want to be able to get a Grub menu. I don't want to hold some key during bootup and then manually change the Linux boot parameters to do whatever it is I need to do. I want to be able to easily select a previous kernel. Luckily, this was not at all a difficult fix. I documented my changes in this repo <Link href="https://github.com/lucas-streanga/m1macpro">here</Link>. 
+
+Exhibit B: no TTY. Or, maybe it's just broken, but I could never get a TTY. This was also an easy fix, as we can add a Grub entry to get a text console on boot.
+
+Exhibit C: inverted function keys. This one I actually understand. On typical x86 PCs, the function keys are primarily function keys first - F1-F12. Then, holding a modifier key gives them new behavior, like backlight adjust. On Mac, it's the opposite. Keeping the Mac way on Linux is undoubtably user-friendly, but I abuse my function keys as many developers do. Luckily, again, an easy fix. 
+
+### Fedora
+
+And... yeah, Fedora. Look, I'm a Debian guy. Other than my early stints with Ubuntu, I've been strictly Debian stable for probably 10 years. I know Debian like the back of my hand. So, going to Fedora has had some learning curves. There is actually a community-supported version of Asahi based off of Debian, and maybe that's something I'll look into later, but generally you don't want to run Debian stable on exoitic hardware that requires bleeding-edge kernels or out-of-tree patches. 
+
+#### SELinux
+
+I have no doubt SELinux is fantastic software and that's its necessary, but *god* it can be annoying. If you don't know, SELinux is a Mandatory Access Control system built into the Linux kernel. It's front and center on RHEL and derivities, but practically forgotten on Debian in favor of AppArmor. SELinux is more rigourous than AppArmor, but with rigor comes friction. It's been especially annoying to coax when it comes to containers. I use <Link href="https://podman.io/">podman</Link> heavily. In fact, I don't even have node or npm installed on any of my systems. You have to make special edits to your containers to support SELinux, like appending `z` on bindmounts. And even that's not enough, because sometimes the software INSIDE the container has different expectations of what it can do than it would have if it was packaged for the host. For example, node inside my containers seems to love wanting to use `iouring`, which SELinux shoots down. The main annoyance with SELinux is that it's not like typical permissions in Linux. Typically, applications *know* when they can't do something. They get feedback from the syscalls if they try to, say, open a file they don't have read access to. But SELinux is largely opaque, so apps that don't take it into account just run into the same walls.
+
+On the host system, this isn't a problem, because naturally apps packaged for Fedora take SELinux policy into account. But on containers, it is, and it's just not a problem I faced on Debian. If I were to switch back to Debian, it would probably be for this reason. 
+
+
+#### DNF
+
+`dnf`, the package manager on Fedora, is... fine. It's completely fine. Yes I lose all my knowledge about `apt` and `dpkg` on Debian, but I'm fine with that. 
+
+#### Small Things
+
+Releases: Fedora releases are *a lot* more frequent than Debian stable. It's not a huge problem, especially on Asahi which has it's own release cadence. But I really enjoy the package stability of Debian: my software never changes underneath my feet. Btrfs: I actually already use Btrfs as my filesystem on Debian, so this is a plus, not a con. 
+
+## Closing Thoughts
+
+I've been incredibly happy with Asahi Linux on my M1 Pro Macbook, and I will continue using it for as long as this laptop lasts. I'm very excited to see how Asahi will progress in the future, but even right now I'm more than happy. If you have a Macbook and want to try it out, I encourage it. The installer found <Link href="https://asahilinux.org/">here</Link> is very easy to use. And, don't worry, you can dual boot. In fact, it's mandatory, so your main APFS volume isn't going anywhere.
