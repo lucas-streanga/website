@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import BlurImage from "../components/BlurImage.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { blogPostingSchema } from "../lib/structured-data";
 import { inlineMarkdown } from "../lib/inlineMarkdown";
 import type { CollectionEntry } from "astro:content";
 
@@ -17,6 +19,13 @@ const formattedDate = date.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
 });
+
+// Auto-generated from frontmatter (+ resolved URLs), so it stays accurate.
+const schema = blogPostingSchema(
+    post,
+    new URL(`/blog/${post.id}/`, Astro.site).href,
+    new URL(cover.src, Astro.site).href,
+);
 ---
 
 <!-- Per-post SEO: the cover doubles as the social share image. -->
@@ -26,6 +35,7 @@ const formattedDate = date.toLocaleDateString("en-US", {
     image={cover.src}
     type="article"
 >
+    <JsonLd schema={schema} />
     <main id="main" class="container post">
         <article>
             <header class="post-header">
