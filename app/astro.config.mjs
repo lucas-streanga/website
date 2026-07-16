@@ -65,6 +65,16 @@ export default defineConfig({
         usePolling: true, // reliable hot reload across a container bind mount
       },
     },
+    // Keep bundled component scripts EXTERNAL. Reason (load-bearing, do NOT
+    // remove): Astro's view-transition router re-runs external module scripts by
+    // their src URL, but re-runs INLINE module scripts by injecting a
+    // `data:application/javascript` script — which the CSP blocks (allowing
+    // `data:` in script-src would be an XSS hole). Externalizing also lets
+    // `script-src 'self'` cover them, so the CSP needs only the two is:inline
+    // hashes. (CSS is inlined separately via build.inlineStylesheets above.)
+    build: {
+      assetsInlineLimit: 0,
+    },
   },
 
   integrations: [
