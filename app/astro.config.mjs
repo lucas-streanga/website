@@ -1,5 +1,6 @@
 import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
 import { unified } from "@astrojs/markdown-remark";
 import remarkLunaFences from "./src/lib/remark-luna-fences.mjs";
 
@@ -58,7 +59,11 @@ export default defineConfig({
     },
   },
 
-  integrations: [mdx()],
+  integrations: [
+    mdx(),
+    // Keep the form thank-you page out of search results.
+    sitemap({ filter: (page) => !page.includes("/contact/thanks") }),
+  ],
   fonts: [
     {
       provider: fontProviders.fontsource(),
