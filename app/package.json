@@ -11,6 +11,7 @@
         "prebuild": "node sync-luna-grammar.mjs",
         "build": "astro build",
         "preview": "astro preview",
+        "check:dns": "node check-dns.mjs",
         "format": "prettier --write .",
         "format:watch": "chokidar \"src/**/*.{astro,ts,js,css}\" \"*.mjs\" \"tsconfig.json\" -c \"prettier --write {path}\" --polling",
         "audit": "lighthouse http://localhost:4321 --chrome-flags=\"--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu\" --output html --output-path ./lighthouse-report.html"
