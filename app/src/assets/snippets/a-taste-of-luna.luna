@@ -7,8 +7,8 @@ const main = fn () use (io, argv): int! => {
   let arguments = args();                        // argv is a capability
   die("usage: ${arguments[0]} <config.json>") if (arguments.count() != 2);
 
-  var fd = openFile(arguments[1] as path);      // file!: error propogates out of main
-  defer close(&fd);
+  var fd = openFile(arguments[1] as path);       // file!: error propogates out of main
+  defer close(fd);
 
   let config = fromJson(readAll(fd) as json);    // table!: bad JSON propagates too
 
