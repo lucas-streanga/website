@@ -160,6 +160,14 @@ const source = raw.replace(/^\n+|\s+$/g, "");
     .luna-code__body :global(pre span) {
         color: light-dark(var(--shiki-light), var(--shiki-dark));
     }
+    /* everforest's comment grey is 3.83:1 on both card backdrops; this is grey2,
+     the next step up its own ramp (5.10/5.19), still well under the fg so
+     comments keep reading as muted. Matching the emitted hex is the handle we
+     have: shiki sets --shiki-* inline, so overriding the property loses to the
+     inline style, and `color` here has to win against the rule above instead. */
+    .luna-code__body :global(pre span[style*="#859289"]) {
+        color: #9da9a0;
+    }
     /* Our surface token, not shiki's theme background (white / cool grey clash
      with the mint/warm palette). The leading `.luna-code` lifts specificity above
      PostLayout's `.prose :global(pre)`, so no !important is needed and the two
