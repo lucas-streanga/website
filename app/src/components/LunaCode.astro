@@ -169,13 +169,22 @@ const source = raw.replace(/^\n+|\s+$/g, "");
         transition:
             background-color 0.2s ease,
             color 0.2s ease;
+
+        /* Geometry has to sit at this lifted specificity too. Astro's scoped
+         attribute selector makes `.prose :global(pre)` tie exactly (0,2,1) with
+         an unprefixed `.luna-code__body :global(pre)`, and PostLayout is emitted
+         later, so it would win: the code got clamped to the 48rem prose measure
+         and centred inside this 56rem card, wasting 64px a side and forcing a
+         horizontal scroll. Keep these as logical properties, matching the ones
+         they override, since max-width and max-inline-size share a computed
+         value and would otherwise look unrelated. */
+        inline-size: 100%;
+        max-inline-size: none;
+        margin: 0;
+        padding: var(--space-4, 1rem);
     }
 
     .luna-code__body :global(pre) {
-        width: 100%;
-        max-width: none; /* prose/post styles must not narrow the code surface */
-        margin: 0;
-        padding: var(--space-4, 1rem);
         font-family: var(--lc-font);
         font-size: var(--text-sm, 0.85rem);
         line-height: 1.6;

@@ -1,5 +1,5 @@
 // GENERATED: synced from lucas-streanga/luna (tooling/shiki-luna.ts @ 5c43d140b922)
-// by scripts/sync-luna-grammar.mjs — edit in the luna repo, never here.
+// by scripts/sync-luna-grammar.mjs, edit in the luna repo, never here.
 /**
  * Luna syntax highlighting for Astro/MDX via Shiki.
  *
